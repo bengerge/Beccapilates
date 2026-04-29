@@ -1,0 +1,34 @@
+<header class="main-header">
+  <div class="logo">
+    <a routerLink="/">BEKKA PILATES</a>
+  </div>
+
+  <nav class="nav-links">
+    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Főoldal</a>
+
+    @if ((currentUser$ | async)?.role !== 'admin') {
+      <a routerLink="/foglalas" routerLinkActive="active">Időpont foglalás</a>
+      <a routerLink="/pricing" routerLinkActive="active">Árak</a>
+      <a routerLink="/contact" routerLinkActive="active">Kapcsolat</a>
+    }
+
+    @if (currentUser$ | async; as user) {
+      @if (user.role !== 'admin') {
+        <a routerLink="/bookings" routerLinkActive="active">Foglalásaim</a>
+      }
+      
+      @if (user.role === 'admin') {
+        <a routerLink="/admin/orak" routerLinkActive="active">Órák rögzítése</a>
+        <a routerLink="/admin/foglalasok" routerLinkActive="active">Foglalások megtekintése</a>
+        <a routerLink="/admin/jogosultsagok" routerLinkActive="active">Jogosultságok</a>
+      }
+      
+      <div class="user-menu">
+        <a routerLink="/profile">Profilom</a>
+        <button class="btn-logout" (click)="logout()">Kijelentkezés</button>
+      </div>
+    } @else {
+      <button class="btn-login" (click)="openLogin()">Bejelentkezés / Regisztráció</button>
+    }
+  </nav>
+</header>

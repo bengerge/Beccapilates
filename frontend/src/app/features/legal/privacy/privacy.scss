@@ -1,0 +1,53 @@
+.legal-container {
+  max-width: 800px; /* Szándékosan keskenyebb, hogy könnyebb legyen olvasni a hosszú szöveget */
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md);
+  background-color: var(--background-light);
+  min-height: 60vh;
+}
+
+.legal-header {
+  border-bottom: 2px solid var(--primary-color);
+  padding-bottom: var(--spacing-md);
+  margin-bottom: var(--spacing-xl);
+
+  h1 {
+    color: var(--secondary-color);
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  p {
+    color: #666;
+    font-style: italic;
+  }
+}
+
+.legal-content {
+  section {
+    margin-bottom: var(--spacing-xl);
+
+    h2 {
+      color: var(--primary-dark);
+      font-size: 1.5rem;
+      margin-bottom: var(--spacing-md);
+    }
+
+    p {
+      color: var(--text-dark);
+      line-height: 1.8; /* Nagyobb sorköz a hosszú szövegek olvasásához */
+      margin-bottom: var(--spacing-md);
+      text-align: justify;
+    }
+
+    ul, ol {
+      margin-left: var(--spacing-xl);
+      margin-bottom: var(--spacing-md);
+      line-height: 1.8;
+      
+      li {
+        margin-bottom: var(--spacing-sm);
+      }
+    }
+  }
+}

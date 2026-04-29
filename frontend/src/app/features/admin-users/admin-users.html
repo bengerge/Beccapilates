@@ -1,0 +1,43 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Jogosultságok kezelése</h1>
+    <p>Felhasználók listája és szerepkörök beállítása</p>
+  </div>
+
+  <div class="card">
+    <div class="table-responsive">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th>Név</th>
+            <th>Email cím</th>
+            <th>Telefonszám</th>
+            <th>Jogosultság</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of users; track user.id) {
+            <tr>
+              <td><strong>{{ user.name || 'Nincs megadva' }}</strong></td>
+              <td>{{ user.email }}</td>
+              <td>{{ user.phone || '-' }}</td>
+              <td>
+                <select 
+                  [value]="user.role" 
+                  (change)="changeRole(user.id, $event)"
+                  [disabled]="user.id === currentUserId"
+                  [class.admin-select]="user.role === 'admin'">
+                  <option value="user">Vendég</option>
+                  <option value="admin">Admin</option>
+                </select>
+                @if (user.id === currentUserId) {
+                  <span class="self-badge">(Te)</span>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

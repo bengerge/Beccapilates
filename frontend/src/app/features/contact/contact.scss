@@ -1,0 +1,117 @@
+.contact-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.page-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+
+  h1 {
+    color: var(--secondary-color);
+    font-size: 2.5rem;
+    margin-bottom: var(--spacing-sm);
+  }
+
+  p {
+    color: #666;
+    font-size: 1.1rem;
+  }
+}
+
+.contact-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+
+  @media (max-width: 768px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.contact-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.info-card {
+  background-color: var(--background-light);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  border-left: 4px solid var(--primary-color);
+
+  h3 {
+    color: var(--primary-dark);
+    margin-bottom: var(--spacing-sm);
+    font-size: 1.25rem;
+  }
+
+  p {
+    color: var(--text-dark);
+    margin-bottom: 6px;
+
+    &.note {
+      font-size: 0.9rem;
+      color: #888;
+      font-style: italic;
+      margin-top: var(--spacing-sm);
+    }
+  }
+
+  strong {
+    color: var(--secondary-color);
+  }
+}
+
+.map-placeholder {
+  background-color: #eaeaea;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  
+  .map-content {
+    color: #888;
+    font-weight: bold;
+    font-size: 1.2rem;
+  }
+}
+
+.social-links-contact {
+  display: flex;
+  gap: var(--spacing-sm);
+  margin-top: var(--spacing-md);
+  padding-top: var(--spacing-md);
+  border-top: 1px dashed #ddd;
+
+  .social-btn {
+    flex: 1;
+    text-align: center;
+    padding: 8px;
+    border-radius: var(--border-radius-sm);
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+    color: #fff;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+
+    &:hover {
+      opacity: 0.9;
+      transform: translateY(-2px);
+    }
+
+    &.insta {
+      background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
+    }
+
+    &.fb {
+      background-color: #1877F2;
+    }
+  }
+}

@@ -1,0 +1,60 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Órák rögzítése</h1>
+    <p>Itt hozhatsz létre új időpontokat az órarendbe.</p>
+  </div>
+
+  <div class="admin-grid">
+    <div class="card form-section">
+      <h2>Új óra felvétele</h2>
+      <form [formGroup]="classForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Óra megnevezése</label>
+          <input type="text" formControlName="title" placeholder="Pl. Alakformáló Pilates">
+        </div>
+
+        <div class="form-group">
+          <label>Oktató</label>
+          <input type="text" formControlName="instructor_name" placeholder="Becca">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kezdés</label>
+            <input type="datetime-local" formControlName="start_time">
+          </div>
+          <div class="form-group">
+            <label>Vége</label>
+            <input type="datetime-local" formControlName="end_time">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Maximális létszám</label>
+          <input type="number" formControlName="max_capacity">
+        </div>
+
+        <button type="submit" [disabled]="classForm.invalid" class="btn-primary">Óra meghirdetése</button>
+      </form>
+    </div>
+
+    <div class="card list-section">
+      <h2>Aktuális órarend</h2>
+      <div class="class-list">
+        @for (item of classes; track item.id) {
+          <div class="class-card">
+            <div class="class-info">
+              <h3>{{ item.title }}</h3>
+              <p class="time">{{ item.start_time | date:'EEEE, HH:mm' }} - {{ item.end_time | date:'HH:mm' }}</p>
+              <p class="instructor">Oktató: {{ item.instructor_name }}</p>
+              <p class="slots">Szabad helyek: {{ item.max_capacity - item.current_bookings }} / {{ item.max_capacity }}</p>
+            </div>
+            <button class="btn-delete" (click)="deleteClass(item.id)">Törlés</button>
+          </div>
+        } @empty {
+          <p class="empty-text">Még nincs rögzített óra.</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

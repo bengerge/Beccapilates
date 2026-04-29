@@ -1,0 +1,111 @@
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background-color: var(--background-light);
+  padding: var(--spacing-xl);
+  border-radius: var(--border-radius-lg);
+  width: 100%;
+  max-width: 450px;
+  box-shadow: var(--shadow-hover);
+  position: relative;
+}
+
+.close-btn {
+  position: absolute;
+  top: var(--spacing-sm);
+  right: var(--spacing-md);
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  color: var(--text-dark);
+  cursor: pointer;
+  padding: 0;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: var(--spacing-lg);
+  border-bottom: 2px solid var(--background-off-white);
+
+  h2 {
+    font-size: 1.2rem;
+    color: #999;
+    cursor: pointer;
+    padding-bottom: var(--spacing-sm);
+    margin: 0;
+    transition: all 0.3s;
+    
+    &.active {
+      color: var(--primary-dark);
+      border-bottom: 2px solid var(--primary-color);
+    }
+  }
+}
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+
+  label {
+    display: block;
+    margin-bottom: var(--spacing-sm);
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  input {
+    width: 100%;
+    padding: var(--spacing-md);
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-sm);
+    font-family: inherit;
+    font-size: 1rem;
+    
+    &:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 2px rgba(232, 180, 184, 0.2);
+    }
+  }
+}
+
+.error-message {
+  color: var(--error-color);
+  font-size: 0.85rem;
+  margin-bottom: var(--spacing-md);
+  text-align: center;
+  font-weight: 600;
+}
+
+.submit-btn {
+  width: 100%;
+  padding: var(--spacing-md);
+  background-color: var(--primary-color);
+  color: var(--text-light);
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: bold;
+  font-size: 1rem;
+  margin-top: var(--spacing-md);
+  
+  &:disabled {
+    background-color: #ddd;
+    color: #999;
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    background-color: var(--primary-dark);
+  }
+}

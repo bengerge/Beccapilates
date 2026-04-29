@@ -1,0 +1,48 @@
+<div class="schedule-container">
+  <div class="schedule-header">
+    <h1>Időpont foglalás</h1>
+    <p>Válaszd ki a számodra megfelelő órát!</p>
+  </div>
+
+  <div class="week-navigation">
+    <button 
+      class="btn-nav" 
+      (click)="changeWeek(-1)" 
+      [disabled]="!canGoBack" 
+      [class.hidden-btn]="!canGoBack">
+      Előző hét
+    </button>
+    
+    <h2>{{ weekDays[0] | date:'MMMM d.' }} - {{ weekDays[6] | date:'MMMM d.' }}</h2>
+    
+    <button class="btn-nav" (click)="changeWeek(1)">Következő hét</button>
+  </div>
+
+  <div class="calendar-grid">
+    @for (day of weekDays; track day.toISOString()) {
+      <div class="calendar-column">
+        <div class="day-header" [class.today]="isToday(day)">
+          <span class="day-name">{{ day | date:'EEEE' }}</span>
+          <span class="day-number">{{ day | date:'d' }}</span>
+        </div>
+        
+        <div class="class-slots">
+          @for (session of getClassesForDay(day); track session.id) {
+            <div class="class-card" (click)="openBooking(session)">
+              <div class="time">{{ session.start_time | date:'HH:mm' }}</div>
+              <div class="name">{{ session.name }}</div>
+              <div class="meta">
+                <span class="difficulty">{{ session.difficulty }}</span>
+              </div>
+              <div class="capacity">
+                Szabad: {{ session.max_capacity - session.current_bookings }} hely
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-slot">Nincs meghirdetett óra</div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>

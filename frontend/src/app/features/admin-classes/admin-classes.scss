@@ -1,0 +1,124 @@
+.admin-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.admin-header {
+  margin-bottom: var(--spacing-xl);
+  h1 { color: var(--secondary-color); margin-bottom: 8px; }
+  p { color: #666; }
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: 400px 1fr;
+  gap: var(--spacing-xl);
+
+  @media (max-width: 992px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--background-light);
+  padding: var(--spacing-lg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+  height: fit-content;
+
+  h2 {
+    font-size: 1.25rem;
+    margin-bottom: var(--spacing-lg);
+    color: var(--primary-dark);
+    border-bottom: 1px solid #eee;
+    padding-bottom: var(--spacing-sm);
+  }
+}
+
+.form-group {
+  margin-bottom: var(--spacing-md);
+  
+  label { 
+    display: block; 
+    margin-bottom: 6px; 
+    font-weight: 600; 
+    font-size: 0.9rem; 
+  }
+  
+  input, select, textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-md);
+    font-family: inherit;
+    background-color: #fff;
+    
+    &:focus { 
+      outline: none; 
+      border-color: var(--primary-color); 
+      box-shadow: 0 0 0 3px rgba(232, 180, 184, 0.2);
+    }
+  }
+
+  textarea {
+    resize: vertical;
+  }
+}
+
+.details { 
+  font-size: 0.85rem; 
+  color: #555; 
+  margin-top: 4px; 
+}
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-sm);
+}
+
+.btn-primary {
+  width: 100%;
+  padding: 12px;
+  background: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: var(--border-radius-md);
+  font-weight: bold;
+  cursor: pointer;
+  &:disabled { background: #ccc; cursor: not-allowed; }
+}
+
+.class-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: var(--spacing-md);
+}
+
+.class-card {
+  background: var(--background-off-white);
+  padding: var(--spacing-md);
+  border-radius: var(--border-radius-md);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-left: 4px solid var(--primary-color);
+
+  h3 { font-size: 1.1rem; margin-bottom: 8px; }
+  .time { font-weight: bold; color: var(--secondary-color); font-size: 0.9rem; }
+  .instructor, .slots { font-size: 0.85rem; color: #666; margin-top: 4px; }
+}
+
+.btn-delete {
+  margin-top: var(--spacing-md);
+  background: transparent;
+  color: var(--error-color);
+  border: 1px solid var(--error-color);
+  padding: 6px;
+  border-radius: var(--border-radius-sm);
+  font-size: 0.8rem;
+  font-weight: bold;
+  cursor: pointer;
+  &:hover { background: var(--error-color); color: white; }
+}

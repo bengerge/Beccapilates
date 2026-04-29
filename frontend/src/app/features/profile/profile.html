@@ -1,0 +1,93 @@
+<div class="profile-container">
+  <div class="profile-header">
+    <h1>Profilom</h1>
+    <p>Kezeld a személyes adataidat és a foglalásaidat.</p>
+  </div>
+
+  <div class="profile-content">
+    
+    <div class="content-column">
+      <div class="card user-info-card">
+        <div class="card-header">
+          <h2>Személyes adatok</h2>
+          <button class="btn-text" (click)="toggleEdit()">
+            {{ isEditing ? 'Mégse' : 'Szerkesztés' }}
+          </button>
+        </div>
+
+        @if (!isEditing && fullProfile) {
+          <div class="info-row">
+            <span class="label">Név:</span>
+            <span class="value">{{ fullProfile.name || 'Nincs megadva' }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Email cím:</span>
+            <span class="value">{{ fullProfile.email }}</span>
+          </div>
+          <div class="info-row">
+            <span class="label">Telefonszám:</span>
+            <span class="value">{{ fullProfile.phone || 'Nincs megadva' }}</span>
+          </div>
+
+          <div class="danger-zone">
+            <button class="btn-danger" (click)="deleteAccount()">Fiók törlése</button>
+          </div>
+        } @else if (isEditing) {
+          <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="edit-form">
+            <div class="form-group">
+              <label>Teljes név</label>
+              <input type="text" formControlName="name">
+            </div>
+            <div class="form-group">
+              <label>Email cím</label>
+              <input type="email" formControlName="email">
+            </div>
+            <div class="form-group">
+              <label>Telefonszám</label>
+              <input type="text" formControlName="phone">
+            </div>
+            <div class="form-group">
+              <label>Új jelszó (Opcionális)</label>
+              <input type="password" formControlName="password" placeholder="Csak ha cserélni szeretnéd">
+            </div>
+            <div class="form-group">
+              <label>Új jelszó megerősítése</label>
+              <input type="password" formControlName="passwordConfirm" placeholder="Írd be az új jelszót újra">
+            </div>
+
+            @if (profileForm.errors?.['passwordsMismatch'] && profileForm.get('passwordConfirm')?.touched) {
+              <div class="error-message">A két jelszó nem egyezik!</div>
+            }
+
+            <button type="submit" [disabled]="profileForm.invalid" class="btn-primary w-100">Mentés</button>
+          </form>
+        }
+      </div>
+    </div>
+
+    <div class="content-column">
+      <div class="card bookings-card">
+        <h2>Közelgő foglalásaim</h2>
+        @if (myBookings.length === 0) {
+          <div class="empty-state">
+            <p>Jelenleg nincs aktív foglalásod.</p>
+            <a routerLink="/foglalas" class="btn-primary">Időpont foglalás</a>
+          </div>
+        } @else {
+          <div class="booking-list">
+            @for (booking of myBookings; track booking.id) {
+              <div class="booking-item">
+                <div class="booking-info">
+                  <h4>{{ booking.class_session.title }}</h4>
+                  <p class="date">{{ booking.class_session.start_time | date:'yyyy. MM. dd. HH:mm' }}</p>
+                </div>
+                <button class="btn-cancel">Lemondás</button>
+              </div>
+            }
+          </div>
+        }
+      </div>
+    </div>
+
+  </div>
+</div>

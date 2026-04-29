@@ -1,0 +1,81 @@
+.main-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background-color: var(--background-light);
+  box-shadow: var(--shadow-card);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--secondary-color);
+    letter-spacing: 2px;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: center;
+
+    a {
+      font-weight: 500;
+      transition: color 0.3s;
+
+      &:hover, &.active {
+        color: var(--primary-dark);
+      }
+    }
+
+    .admin-link {
+      color: var(--error-color);
+      font-weight: 700;
+    }
+
+    .user-menu {
+      display: flex;
+      gap: var(--spacing-md);
+      align-items: center;
+      border-left: 2px solid var(--primary-color);
+      padding-left: var(--spacing-md);
+    }
+  }
+
+  button {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    
+    &.btn-login {
+      background-color: var(--primary-color);
+      color: var(--text-light);
+      &:hover { background-color: var(--primary-dark); }
+    }
+
+    &.btn-logout {
+      background-color: transparent;
+      border: 1px solid var(--secondary-color);
+      color: var(--secondary-color);
+      &:hover {
+        background-color: var(--secondary-color);
+        color: var(--text-light);
+      }
+    }
+  }
+}
+
+/* Add ezt a meglévő kódokhoz */
+.admin-separator {
+  width: 2px;
+  height: 20px;
+  background-color: #ddd;
+  margin: 0 var(--spacing-sm);
+}
+
+.admin-link {
+  color: var(--primary-dark) !important;
+  font-weight: 800 !important;
+}

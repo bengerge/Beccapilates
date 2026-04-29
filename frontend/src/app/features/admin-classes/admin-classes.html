@@ -1,0 +1,76 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Órák rögzítése</h1>
+    <p>Adminisztrációs felület az órarend kezeléséhez.</p>
+  </div>
+
+  <div class="admin-grid">
+    <div class="card form-section">
+      <h2>Új óra felvétele</h2>
+      <form [formGroup]="classForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label>Óra megnevezése</label>
+          <input type="text" formControlName="name" placeholder="Pl. Dinamikus Pilates">
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Nehézségi szint</label>
+            <select formControlName="difficulty">
+              <option value="beginner">Kezdő</option>
+              <option value="advanced">Haladó</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Helyszín</label>
+            <input type="text" formControlName="location" placeholder="Pl. A terem">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Kezdés</label>
+            <input type="datetime-local" formControlName="start_time">
+          </div>
+          <div class="form-group">
+            <label>Vége</label>
+            <input type="datetime-local" formControlName="end_time">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Maximális létszám</label>
+          <input type="number" formControlName="max_capacity">
+        </div>
+
+        <div class="form-group">
+          <label>Leírás (opcionális)</label>
+          <textarea formControlName="description" rows="2"></textarea>
+        </div>
+
+        <button type="submit" [disabled]="classForm.invalid" class="btn-primary">Mentés</button>
+      </form>
+    </div>
+
+    <div class="card list-section">
+      <h2>Aktuális órarend</h2>
+      <div class="class-list">
+        @for (item of classes; track item.id) {
+          <div class="class-card">
+            <div class="class-info">
+              <h3>{{ item.name }}</h3>
+              <p class="time">{{ item.start_time | date:'EEEE, HH:mm' }}</p>
+              <p class="meta">
+                <span>{{ item.difficulty }}</span> | <span>{{ item.location }}</span>
+              </p>
+              <p class="capacity">Létszám: {{ item.current_bookings || 0 }} / {{ item.max_capacity }}</p>
+            </div>
+            <button class="btn-delete" (click)="deleteClass(item.id)">Törlés</button>
+          </div>
+        } @empty {
+          <p class="empty-text">Nincs rögzített óra.</p>
+        }
+      </div>
+    </div>
+  </div>
+</div>

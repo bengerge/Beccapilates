@@ -1,0 +1,58 @@
+/* You can add global styles to this file, and also import other style files */
+:root {
+  --primary-color: #E8B4B8;
+  --primary-dark: #A45C6A;
+  --secondary-color: #672E3B;
+  --background-light: #FFFFFF;
+  --background-off-white: #FDF9F9;
+  --text-dark: #333333;
+  --text-light: #FFFFFF;
+  --error-color: #D32F2F;
+  --success-color: #388E3C;
+
+  --font-main: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+
+  --border-radius-sm: 4px;
+  --border-radius-md: 8px;
+  --border-radius-lg: 16px;
+
+  --shadow-card: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 8px 15px rgba(0, 0, 0, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-main);
+  background-color: var(--background-off-white);
+  color: var(--text-dark);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+.app-container {
+  flex: 1;
+}

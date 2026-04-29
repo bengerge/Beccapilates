@@ -1,0 +1,37 @@
+<div class="admin-container">
+  <div class="admin-header">
+    <h1>Központi Foglalások</h1>
+    <p>Áttekintés az összes beérkezett jelentkezésről</p>
+  </div>
+
+  <div class="card">
+    @if (bookings.length === 0) {
+      <div class="empty-state">
+        <p>Jelenleg nincs egyetlen aktív foglalás sem a rendszerben.</p>
+      </div>
+    } @else {
+      <div class="table-responsive">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Időpont</th>
+              <th>Óra típusa</th>
+              <th>Vendég Neve</th>
+              <th>Email cím</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (booking of bookings; track booking.id) {
+              <tr>
+                <td><strong>{{ booking.start_time | date:'yyyy.MM.dd. HH:mm' }}</strong></td>
+                <td>{{ booking.class_title }}</td>
+                <td>{{ booking.user_name }}</td>
+                <td>{{ booking.user_email }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
