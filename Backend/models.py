@@ -9,8 +9,8 @@ class RoleEnum(str, enum.Enum):
     user = "user"
 
 class DifficultyEnum(str, enum.Enum):
-    beginner = "kezdő"
-    advanced = "haladó"
+    beginner = "beginner"
+    advanced = "advanced"
 
 class User(Base):
     __tablename__ = "users"

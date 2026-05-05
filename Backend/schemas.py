@@ -56,3 +56,9 @@ class BookingResponse(BookingBase):
     created_at: datetime
 
     model_config = ConfigDict(from_attributes=True)
+    
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[str] = None
+    phone: Optional[str] = None
+    password: Optional[str] = None
