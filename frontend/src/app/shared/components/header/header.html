@@ -1,34 +1,46 @@
 <header class="main-header">
-  <div class="logo">
-    <a routerLink="/">BEKKA PILATES</a>
+  <div class="header-container">
+    <div class="logo">
+      <a routerLink="/" (click)="closeMobileMenu()">BEKKA PILATES</a>
+    </div>
+
+    <button 
+      class="hamburger-btn" 
+      [class.open]="isMobileMenuOpen" 
+      (click)="toggleMobileMenu()"
+      aria-label="Menü">
+      <span></span>
+      <span></span>
+      <span></span>
+    </button>
+
+    <nav class="nav-links" [class.active]="isMobileMenuOpen">
+      <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" (click)="closeMobileMenu()">Főoldal</a>
+
+      @if ((currentUser$ | async)?.role !== 'admin') {
+        <a routerLink="/book" routerLinkActive="active" (click)="closeMobileMenu()">Időpont foglalás</a>
+        <a routerLink="/pricing" routerLinkActive="active" (click)="closeMobileMenu()">Árak</a>
+        <a routerLink="/contact" routerLinkActive="active" (click)="closeMobileMenu()">Kapcsolat</a>
+      }
+
+      @if (currentUser$ | async; as user) {
+        @if (user.role !== 'admin') {
+          <a routerLink="/bookings" routerLinkActive="active" (click)="closeMobileMenu()">Foglalásaim</a>
+        }
+        
+        @if (user.role === 'admin') {
+          <a routerLink="/admin/classes" routerLinkActive="active" (click)="closeMobileMenu()">Órák rögzítése</a>
+          <a routerLink="/admin/bookings" routerLinkActive="active" (click)="closeMobileMenu()">Foglalások megtekintése</a>
+          <a routerLink="/admin/permissions" routerLinkActive="active" (click)="closeMobileMenu()">Jogosultságok</a>
+        }
+        
+        <div class="user-menu">
+          <a routerLink="/profile" (click)="closeMobileMenu()">Profilom</a>
+          <button class="btn-logout" (click)="logout(); closeMobileMenu()">Kijelentkezés</button>
+        </div>
+      } @else {
+        <button class="btn-login" (click)="openLogin(); closeMobileMenu()">Bejelentkezés / Regisztráció</button>
+      }
+    </nav>
   </div>
-
-  <nav class="nav-links">
-    <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}">Főoldal</a>
-
-    @if ((currentUser$ | async)?.role !== 'admin') {
-      <a routerLink="/foglalas" routerLinkActive="active">Időpont foglalás</a>
-      <a routerLink="/pricing" routerLinkActive="active">Árak</a>
-      <a routerLink="/contact" routerLinkActive="active">Kapcsolat</a>
-    }
-
-    @if (currentUser$ | async; as user) {
-      @if (user.role !== 'admin') {
-        <a routerLink="/bookings" routerLinkActive="active">Foglalásaim</a>
-      }
-      
-      @if (user.role === 'admin') {
-        <a routerLink="/admin/orak" routerLinkActive="active">Órák rögzítése</a>
-        <a routerLink="/admin/foglalasok" routerLinkActive="active">Foglalások megtekintése</a>
-        <a routerLink="/admin/jogosultsagok" routerLinkActive="active">Jogosultságok</a>
-      }
-      
-      <div class="user-menu">
-        <a routerLink="/profile">Profilom</a>
-        <button class="btn-logout" (click)="logout()">Kijelentkezés</button>
-      </div>
-    } @else {
-      <button class="btn-login" (click)="openLogin()">Bejelentkezés / Regisztráció</button>
-    }
-  </nav>
 </header>

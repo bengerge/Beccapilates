@@ -4,6 +4,7 @@ import { RouterModule, Router } from '@angular/router';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 import { AuthService } from '../../core/services/auth';
 import { ClassService } from '../../core/services/class';
+import { BookingService } from '../../core/services/booking';
 
 export const passwordsMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
@@ -26,7 +27,7 @@ export class ProfileComponent implements OnInit {
   private router = inject(Router);
   authService = inject(AuthService);
   classService = inject(ClassService);
-
+  bookingService = inject(BookingService);
   fullProfile: any = null;
   myBookings: any[] = [];
   isEditing = false;
@@ -64,7 +65,7 @@ export class ProfileComponent implements OnInit {
   }
 
   loadMyBookings() {
-    this.classService.getMyBookings().subscribe({
+    this.bookingService.getMyBookings().subscribe({
       next: (data) => this.myBookings = data,
       error: () => this.myBookings = []
     });

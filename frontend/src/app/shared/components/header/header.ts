@@ -15,13 +15,24 @@ export class HeaderComponent {
   private authService = inject(AuthService);
   private uiService = inject(UiService);
 
+  isMobileMenuOpen = false;
+
   currentUser$ = this.authService.currentUser$;
 
   openLogin() {
     this.uiService.openAuthModal();
   }
 
+  toggleMobileMenu() {
+    this.isMobileMenuOpen = !this.isMobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.isMobileMenuOpen = false;
+  }
+
   logout() {
     this.authService.logout();
+    this.closeMobileMenu();
   }
 }

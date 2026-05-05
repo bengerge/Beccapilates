@@ -136,3 +136,123 @@
 .btn-nav:disabled {
   cursor: not-allowed;
 }
+
+/* --- Custom Modals for Schedule --- */
+.custom-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.custom-modal-content {
+  background: white;
+  width: 90%;
+  max-width: 500px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 15px 30px rgba(0,0,0,0.2);
+  overflow: hidden;
+  animation: slideUp 0.3s ease-out;
+
+  &.success-content {
+    border-top: 6px solid #28a745;
+  }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--background-off-white);
+  border-bottom: 1px solid #eee;
+
+  h3 { margin: 0; color: var(--primary-dark); font-size: 1.3rem; }
+  
+  &.success-header h3 { color: #28a745; }
+
+  .close-btn {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: #888;
+    &:hover { color: var(--error-color); }
+  }
+}
+
+.modal-body {
+  padding: var(--spacing-lg);
+  
+  p { margin-bottom: 10px; color: var(--text-dark); }
+  .modal-time { font-size: 1.1rem; color: var(--secondary-color); }
+  .modal-detail { font-size: 1rem; }
+  .success-text { font-size: 1.1rem; text-align: center; font-weight: bold; margin-bottom: 20px;}
+}
+
+.info-box {
+  background: var(--background-light);
+  padding: 12px;
+  border-radius: var(--border-radius-md);
+  margin-top: 15px;
+  border-left: 4px solid var(--primary-color);
+
+  strong { display: block; margin-bottom: 5px; color: var(--primary-dark); }
+  p { margin: 0; font-size: 0.9rem; color: #555; line-height: 1.4; }
+
+  &.payment-box {
+    border-left-color: #28a745;
+    background: rgba(40, 167, 69, 0.05);
+  }
+}
+
+.modal-footer {
+  padding: var(--spacing-md) var(--spacing-lg);
+  background: var(--background-off-white);
+  border-top: 1px solid #eee;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+
+  &.center-footer { justify-content: center; }
+
+  button {
+    padding: 10px 20px;
+    border-radius: var(--border-radius-md);
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+
+    &.btn-secondary {
+      background: #e2e8f0;
+      color: #475569;
+      &:hover { background: #cbd5e1; }
+    }
+
+    &.btn-primary {
+      background: var(--primary-color);
+      color: white;
+      &:hover:not(:disabled) { background: var(--primary-dark); }
+      &:disabled { background: #cbd5e1; cursor: not-allowed; }
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

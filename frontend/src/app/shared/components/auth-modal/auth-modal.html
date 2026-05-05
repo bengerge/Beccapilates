@@ -16,6 +16,19 @@
       }
 
       <div class="form-group">
+      
+      @if (successMessage) {
+        <div class="feedback-msg success">
+          {{ successMessage }}
+        </div>
+      }
+
+      @if (errorMessage) {
+        <div class="feedback-msg error">
+          {{ errorMessage }}
+        </div>
+      }
+
         <label for="email">Email cím</label>
         <input id="email" type="email" formControlName="email">
       </div>
@@ -29,8 +42,18 @@
 
       <div class="form-group">
         <label for="password">Jelszó</label>
-        <input id="password" type="password" formControlName="password">
+        <input id="password" type="password" formControlName="password" placeholder="******">
       </div>
+      @if (!isLoginMode) {
+      <div class="form-group">
+          <label>Jelszó megerősítése</label>
+          <input type="password" formControlName="passwordConfirm" placeholder="******">
+          
+          @if (authForm.get('passwordConfirm')?.hasError('mismatch') && authForm.get('passwordConfirm')?.touched) {
+            <small class="error-text">A két jelszó nem egyezik meg!</small>
+          }
+        </div>
+      }
 
       @if (errorMessage) {
         <div class="error-message">{{ errorMessage }}</div>

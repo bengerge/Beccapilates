@@ -1,37 +1,154 @@
-<div class="admin-container">
-  <div class="admin-header">
-    <h1>Központi Foglalások</h1>
-    <p>Áttekintés az összes beérkezett jelentkezésről</p>
+<div class="schedule-container">
+  <div class="schedule-header">
+    <h1>Órarend és Foglalások</h1>
+    <p>Adminisztrációs felület az órák és résztvevők kezeléséhez.</p>
   </div>
 
-  <div class="card">
-    @if (bookings.length === 0) {
-      <div class="empty-state">
-        <p>Jelenleg nincs egyetlen aktív foglalás sem a rendszerben.</p>
-      </div>
-    } @else {
-      <div class="table-responsive">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th>Időpont</th>
-              <th>Óra típusa</th>
-              <th>Vendég Neve</th>
-              <th>Email cím</th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (booking of bookings; track booking.id) {
-              <tr>
-                <td><strong>{{ booking.start_time | date:'yyyy.MM.dd. HH:mm' }}</strong></td>
-                <td>{{ booking.class_title }}</td>
-                <td>{{ booking.user_name }}</td>
-                <td>{{ booking.user_email }}</td>
-              </tr>
-            }
-          </tbody>
-        </table>
+  <div class="week-navigation">
+    <button class="btn-nav" (click)="changeWeek(-1)" [disabled]="!canGoBack">Előző hét</button>
+    <h2>{{ weekDays[0] | date:'MMMM d.' }} - {{ weekDays[6] | date:'MMMM d.' }}</h2>
+    <button class="btn-nav" (click)="changeWeek(1)">Következő hét</button>
+  </div>
+
+  <div class="calendar-grid">
+    @for (day of weekDays; track day.toISOString()) {
+      <div class="calendar-column">
+        <div class="day-header" [class.today]="isToday(day)">
+          <span class="day-name">{{ day | date:'EEEE' }}</span>
+          <span class="day-number">{{ day | date:'d' }}</span>
+        </div>
+        
+        <div class="class-slots">
+          @for (session of getClassesForDay(day); track session.id) {
+            <div class="class-card" (click)="openClassDetails(session)">
+              <div class="time">{{ session.start_time | date:'HH:mm' }} - {{ session.end_time | date:'HH:mm' }}</div>
+              <div class="name">{{ session.name }}</div>
+              <div class="meta">
+                <span class="difficulty">{{ getDifficulty(session.difficulty) }}</span>
+              </div>
+              <div class="capacity" [class.text-danger]="session.current_bookings >= session.max_capacity">
+                Létszám: {{ session.current_bookings }} / {{ session.max_capacity }}
+              </div>
+            </div>
+          } @empty {
+            <div class="empty-slot">Nincs óra</div>
+          }
+        </div>
       </div>
     }
   </div>
 </div>
+
+@if (selectedClass) {
+  <div class="custom-modal-overlay" (click)="closeModal()">
+    <div class="custom-modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h3>{{ isEditing ? 'Óra módosítása' : selectedClass.name }}</h3>
+        <button class="close-btn" (click)="closeModal()">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        @if (!isEditing) {
+          <p class="modal-time">⏰ <strong>Időpont:</strong> {{ selectedClass.start_time | date:'yyyy. MMMM d. HH:mm' }} - {{ selectedClass.end_time | date:'HH:mm' }}</p>
+          <p class="modal-detail">📍 <strong>Helyszín:</strong> {{ selectedClass.location }}</p>
+          <p class="modal-detail">📊 <strong>Szint:</strong> {{ getDifficulty(selectedClass.difficulty) }}</p>
+          
+          <div class="info-box attendees-box">
+            <strong>👥 Résztvevők ({{ attendees.length }}/{{ selectedClass.max_capacity }})</strong>
+            <div class="attendees-list">
+  @for (user of attendees; track user.booking_id) {
+    <div class="attendee-item" [class.confirm-mode]="confirmingAttendeeId === user.booking_id">
+      
+      @if (confirmingAttendeeId !== user.booking_id) {
+        <div class="attendee-info">
+          <span class="attendee-name">{{ user.name }}</span>
+          <div class="attendee-contact">
+            <a href="mailto:{{ user.email }}">✉️ {{ user.email }}</a>
+            <a href="tel:{{ user.phone }}">📞 {{ user.phone }}</a>
+          </div>
+        </div>
+        <button class="btn-remove-user" (click)="confirmingAttendeeId = user.booking_id" title="Vendég eltávolítása">
+          &times;
+        </button>
+      } @else {
+        <div class="confirm-removal">
+          <span class="confirm-text">Eltávolítod a vendéget?</span>
+          <div class="confirm-actions">
+            <button class="btn-cancel-small" (click)="confirmingAttendeeId = null">Mégsem</button>
+            <button class="btn-confirm-small" (click)="removeAttendee(user.booking_id)">Igen</button>
+          </div>
+        </div>
+      }
+
+    </div>
+  } @empty {
+    <p class="empty-text">Még senki nem foglalt erre az órára.</p>
+  }
+</div>
+          </div>
+        } @else {
+          <form [formGroup]="editForm" class="edit-form">
+            <div class="form-group">
+              <label>Óra neve</label>
+              <input type="text" formControlName="name">
+            </div>
+            
+            <div class="form-row">
+              <div class="form-group">
+                <label>Kezdés</label>
+                <input type="datetime-local" formControlName="start_time">
+              </div>
+              <div class="form-group">
+                <label>Vége</label>
+                <input type="datetime-local" formControlName="end_time">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Szint</label>
+                <select formControlName="difficulty">
+                  <option value="beginner">Kezdő</option>
+                  <option value="intermediate">Középhaladó</option>
+                  <option value="advanced">Haladó</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Létszám</label>
+                <input type="number" formControlName="max_capacity">
+              </div>
+            </div>
+            
+            <div class="form-group">
+              <label>Helyszín</label>
+              <input type="text" formControlName="location">
+            </div>
+          </form>
+        }
+      </div>
+
+      <div class="modal-footer">
+        @if (!isEditing) {
+          @if (!isConfirmingDelete) {
+            <button class="btn-danger" (click)="isConfirmingDelete = true">Törlés</button>
+            <div class="right-actions">
+              <button class="btn-secondary" (click)="closeModal()">Bezárás</button>
+              <button class="btn-primary" (click)="startEditing()">Módosítás</button>
+            </div>
+          } @else {
+            <div class="confirm-delete-actions" style="width: 100%; display: flex; justify-content: space-between; align-items: center;">
+              <span style="color: #dc2626; font-weight: bold;">Biztosan törlöd az órát?</span>
+              <div style="display: flex; gap: 10px;">
+                <button class="btn-secondary" (click)="isConfirmingDelete = false">Mégsem</button>
+                <button class="btn-danger" (click)="deleteClass()">Igen, törlöm</button>
+              </div>
+            </div>
+          }
+        } @else {
+          <button class="btn-secondary" (click)="isEditing = false">Mégsem</button>
+          <button class="btn-primary" (click)="saveEdit()" [disabled]="editForm.invalid">Mentés</button>
+        }
+      </div>
+    </div>
+  </div>
+}

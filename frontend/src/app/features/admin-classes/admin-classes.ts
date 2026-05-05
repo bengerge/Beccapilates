@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AdminService } from '../../core/services/admin';
 import { ClassService, ClassSession } from '../../core/services/class';
+import { ToastService } from '../../core/services/toast';
 
 @Component({
   selector: 'app-admin-classes',
@@ -15,10 +16,17 @@ export class AdminClassesComponent implements OnInit {
   private fb = inject(FormBuilder);
   private adminService = inject(AdminService);
   private classService = inject(ClassService);
+  private toastService = inject(ToastService);
 
   classes: ClassSession[] = [];
   classForm!: FormGroup;
 
+  difficultyMap: Record<string, string> = {
+    'beginner': 'Kezdő',
+    'intermediate': 'Középhaladó',
+    'advanced': 'Haladó'
+  };
+  
   ngOnInit() {
     this.initForm();
     this.loadClasses();
@@ -34,6 +42,21 @@ export class AdminClassesComponent implements OnInit {
       max_capacity: [10, [Validators.required, Validators.min(1)]],
       description: ['']
     });
+
+    // ÚJ: Automatikus +1 óra kalkuláció a befejezéshez
+    this.classForm.get('start_time')?.valueChanges.subscribe(startTime => {
+      if (startTime) {
+        const startDate = new Date(startTime);
+        startDate.setHours(startDate.getHours() + 1); // +1 óra hozzáadása
+        
+        // Helyi időzónához igazított formátum (YYYY-MM-DDTHH:mm), amit a datetime-local input elfogad
+        const tzOffset = startDate.getTimezoneOffset() * 60000;
+        const localISOTime = new Date(startDate.getTime() - tzOffset).toISOString().slice(0, 16);
+        
+        // Csendben (emitEvent: false) frissítjük a vége mezőt, hogy ne okozzunk végtelen ciklust
+        this.classForm.patchValue({ end_time: localISOTime }, { emitEvent: false });
+      }
+    });
   }
 
   loadClasses() {
@@ -43,7 +66,7 @@ export class AdminClassesComponent implements OnInit {
           new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
         );
       },
-      error: (err) => console.error('Hiba az órák betöltésekor:', err)
+      error: () => this.toastService.show('Nem sikerült betölteni a meglévő órákat.', 'error')
     });
   }
 
@@ -57,21 +80,21 @@ export class AdminClassesComponent implements OnInit {
 
     this.adminService.createClass(payload).subscribe({
       next: () => {
+        this.toastService.show('Új óra sikeresen meghirdetve!', 'success');
         this.classForm.reset({ 
           max_capacity: 10, 
           difficulty: 'beginner' 
         });
         this.loadClasses();
       },
-      error: (err) => alert('Hiba történt: ' + (err.error?.detail?.[0]?.msg || 'Ismeretlen hiba'))
+      error: (err) => {
+        const errorMsg = err.error?.detail?.[0]?.msg || err.error?.detail || 'Ismeretlen hiba';
+        this.toastService.show(`Hiba történt: ${errorMsg}`, 'error');
+      }
     });
   }
 
-  deleteClass(id: number) {
-    if (confirm('Biztosan törölni szeretnéd ezt az órát?')) {
-      this.adminService.deleteClass(id).subscribe({
-        next: () => this.loadClasses()
-      });
-    }
+  getDifficultyLabel(level: string): string {
+    return this.difficultyMap[level] || level;
   }
 }

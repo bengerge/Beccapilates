@@ -1,79 +1,122 @@
+/* --- Hero (Fő banner) Szekció --- */
 .hero {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  min-height: 70vh;
-  gap: var(--spacing-xl);
-  padding: var(--spacing-xl) 0;
-
-  @media (max-width: 768px) {
-    flex-direction: column;
-    text-align: center;
-  }
+  padding: var(--spacing-xl) var(--spacing-md);
+  background-color: var(--background-off-white); /* Egy nagyon finom háttérszín, hogy kiemelje a fehér kártyákat/képeket */
+  overflow: hidden;
 }
 
-.hero-content {
-  flex: 1;
+.hero-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* Két egyforma széles oszlop */
+  gap: var(--spacing-xxl); /* Távolság a szöveg és a kép között */
+  align-items: center; /* Függőlegesen középre igazítja a két oldalt */
+}
 
+/* Bal oldal (Szöveg) */
+.hero-text-side {
   h1 {
-    font-size: 3.5rem;
+    font-size: clamp(2.5rem, 5vw, 4rem);
     color: var(--secondary-color);
+    line-height: 1.1;
     margin-bottom: var(--spacing-md);
-    line-height: 1.2;
+    font-weight: 900;
   }
 
   p {
-    font-size: 1.2rem;
-    color: var(--text-dark);
+    font-size: 1.15rem;
+    color: #555;
+    line-height: 1.6;
     margin-bottom: var(--spacing-xl);
-    max-width: 600px;
   }
 }
 
 .btn-primary {
   display: inline-block;
-  padding: var(--spacing-md) var(--spacing-xl);
+  padding: 16px 40px;
   background-color: var(--primary-color);
-  color: var(--text-light);
-  font-size: 1.2rem;
-  font-weight: bold;
-  border-radius: var(--border-radius-lg);
-  transition: all 0.3s;
+  color: white;
+  text-decoration: none;
+  font-weight: 700;
+  font-size: 1.1rem;
+  border-radius: var(--border-radius-md);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
 
   &:hover {
     background-color: var(--primary-dark);
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
   }
 }
 
-.hero-image {
-  flex: 1;
-  display: flex;
-  justify-content: center;
-
-  .image-placeholder {
-    width: 100%;
-    max-width: 500px;
-    aspect-ratio: 4/3;
-    background-color: var(--primary-color);
-    border-radius: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    font-size: 1.5rem;
-    box-shadow: var(--shadow-card);
-    opacity: 0.7;
-  }
-}
-
-.about {
-  padding: var(--spacing-xl) 0;
-  text-align: center;
+/* Jobb oldal (Kép) */
+.hero-image-side {
+  width: 100%;
+  height: 600px; /* A kép fix magassága asztali nézetben */
   
+  /* A működő relatív útvonalad */
+  background-image: url('../../../assets/images/Rebeka.jpg');
+  background-size: cover;
+  background-position: center;
+  
+  /* Elegáns dizájn elemek */
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+
+/* --- Rólunk (About) Szekció --- */
+.about {
+  padding: var(--spacing-xxl) var(--spacing-md);
+  background-color: white;
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    text-align: center;
+  }
+
   h2 {
+    font-size: 2.5rem;
     color: var(--secondary-color);
+    margin-bottom: var(--spacing-xl);
+    position: relative;
+    padding-bottom: 15px;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 4px;
+      background-color: var(--primary-color);
+      border-radius: 2px;
+    }
+  }
+
+  .about-text p {
+    font-size: 1.15rem;
+    line-height: 1.8;
+    color: #555;
     margin-bottom: var(--spacing-md);
+  }
+}
+
+
+/* --- Mobil és Tablet Nézet (Reszponzivitás) --- */
+@media (max-width: 992px) {
+  .hero-container {
+    grid-template-columns: 1fr; /* Mobilon 1 oszlopos lesz */
+    gap: var(--spacing-lg);
+    text-align: center; /* Középre igazítjuk a szöveget mobilon */
+  }
+
+  .hero-image-side {
+    height: 400px; /* Mobilon kisebb a kép */
+    order: -1; /* Zseniális trükk: ez teszi a képet a szöveg FÖLÉ mobilon! */
   }
 }

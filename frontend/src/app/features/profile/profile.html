@@ -78,10 +78,10 @@
             @for (booking of myBookings; track booking.id) {
               <div class="booking-item">
                 <div class="booking-info">
-                  <h4>{{ booking.class_session.title }}</h4>
-                  <p class="date">{{ booking.class_session.start_time | date:'yyyy. MM. dd. HH:mm' }}</p>
+                  <h4>{{ booking.class_name }}</h4>
+                  <p class="date">{{ booking.start_time | date:'yyyy. MM. dd. HH:mm' }} ({{ booking.start_time | date:'EEEE' }})</p>
+                  <p class="location">{{ booking.location }}</p>
                 </div>
-                <button class="btn-cancel">Lemondás</button>
               </div>
             }
           </div>

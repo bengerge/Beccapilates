@@ -7,7 +7,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/home/home').then(m => m.HomeComponent)
   },
   {
-    path: 'foglalas',
+    path: 'book',
     loadComponent: () => import('./features/schedule/schedule').then(m => m.ScheduleComponent)
   },
   {
@@ -30,25 +30,24 @@ export const routes: Routes = [
     path: 'pricing',
     loadComponent: () => import('./features/pricing/pricing').then(m => m.PricingComponent)
   },
-  {
-    path: 'admin',
-    canActivate: [adminGuard],
-    loadComponent: () => import('./features/admin/admin').then(m => m.AdminComponent)
-  },
   { 
-    path: 'admin/orak', 
+    path: 'admin/classes', 
     canActivate: [adminGuard],
     loadComponent: () => import('./features/admin-classes/admin-classes').then(m => m.AdminClassesComponent) 
   },
   { 
-    path: 'admin/foglalasok', 
+    path: 'admin/bookings', 
     canActivate: [adminGuard],
     loadComponent: () => import('./features/admin-bookings/admin-bookings').then(m => m.AdminBookingsComponent) 
   },
   { 
-    path: 'admin/jogosultsagok', 
+    path: 'admin/permissions', 
     canActivate: [adminGuard],
     loadComponent: () => import('./features/admin-users/admin-users').then(m => m.AdminUsersComponent) 
+  },
+  {
+    path: 'bookings',
+    loadComponent: () => import('./features/bookings/bookings').then(m => m.BookingsComponent)
   }
   
 ];

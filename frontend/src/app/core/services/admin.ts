@@ -7,25 +7,42 @@ import { Observable } from 'rxjs';
 })
 export class AdminService {
   private http = inject(HttpClient);
-  private readonly API_URL = '/api/admin';
+  
+  private readonly ADMIN_API_URL = '/api/admin';
 
   getUsers(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/users`);
+    return this.http.get<any[]>(`${this.ADMIN_API_URL}/users`);
   }
 
   updateUserRole(userId: number, role: string): Observable<any> {
-    return this.http.put(`${this.API_URL}/users/${userId}/role`, { role });
+    return this.http.put(`${this.ADMIN_API_URL}/users/${userId}/role`, { role });
   }
 
   getAllBookings(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.API_URL}/bookings`);
+    return this.http.get<any[]>(`${this.ADMIN_API_URL}/bookings`);
+  }
+
+  getClasses(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.ADMIN_API_URL}/classes`);
   }
 
   createClass(classData: any): Observable<any> {
-    return this.http.post(`${this.API_URL}/classes`, classData);
+    return this.http.post(`${this.ADMIN_API_URL}/classes`, classData);
   }
 
   deleteClass(classId: number): Observable<any> {
-    return this.http.delete(`${this.API_URL}/classes/${classId}`);
+    return this.http.delete(`${this.ADMIN_API_URL}/classes/${classId}`, { responseType: 'text' });
+  }
+
+  updateClass(classId: number, data: any): Observable<any> {
+    return this.http.put(`${this.ADMIN_API_URL}/classes/${classId}`, data);
+  }
+  
+  getAttendees(classId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.ADMIN_API_URL}/classes/${classId}/attendees`);
+  }
+
+  deleteBooking(bookingId: number): Observable<any> {
+    return this.http.delete(`${this.ADMIN_API_URL}/bookings/${bookingId}`, { responseType: 'text' });
   }
 }

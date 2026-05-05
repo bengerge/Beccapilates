@@ -4,6 +4,7 @@ import { ClassService, ClassSession } from '../../core/services/class';
 import { BookingService } from '../../core/services/booking';
 import { AuthService } from '../../core/services/auth';
 import { UiService } from '../../core/services/ui';
+import { ToastService } from '../../core/services/toast';
 
 @Component({
   selector: 'app-schedule',
@@ -17,12 +18,22 @@ export class ScheduleComponent implements OnInit {
   private bookingService = inject(BookingService);
   private authService = inject(AuthService);
   private uiService = inject(UiService);
+  private toastService = inject(ToastService);
 
   classes: ClassSession[] = [];
   currentWeekStart: Date = new Date();
   realWeekStart: Date = new Date();
   weekDays: Date[] = [];
   isLoggedIn = false;
+
+  selectedSession: ClassSession | null = null;
+  showSuccessModal = false;
+
+  difficultyMap: Record<string, string> = {
+    'beginner': 'Kezdő',
+    'intermediate': 'Középhaladó',
+    'advanced': 'Haladó'
+  };
 
   ngOnInit() {
     this.setWeekToCurrent();
@@ -40,21 +51,20 @@ export class ScheduleComponent implements OnInit {
     });
   }
 
+  getDifficultyLabel(level: string): string {
+    return this.difficultyMap[level] || level;
+  }
+
   setWeekToCurrent() {
     const today = new Date();
     const day = today.getDay() || 7;
-    
-    if (day !== 1) {
-      today.setHours(-24 * (day - 1));
-    }
-    
+    if (day !== 1) today.setHours(-24 * (day - 1));
     this.currentWeekStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     this.generateWeekDays();
   }
 
   changeWeek(offset: number) {
     if (offset === -1 && !this.canGoBack) return;
-
     this.currentWeekStart.setDate(this.currentWeekStart.getDate() + (offset * 7));
     this.currentWeekStart = new Date(this.currentWeekStart);
     this.generateWeekDays();
@@ -89,27 +99,32 @@ export class ScheduleComponent implements OnInit {
     return this.currentWeekStart.getTime() > this.realWeekStart.getTime();
   }
 
-  openBooking(session: ClassSession) {
+  openDetails(session: ClassSession) {
+    this.selectedSession = session;
+  }
+
+  closeModals() {
+    this.selectedSession = null;
+    this.showSuccessModal = false;
+  }
+
+  confirmBooking() {
+    if (!this.selectedSession) return;
+
     if (!this.isLoggedIn) {
       this.uiService.openAuthModal();
-      return;
+      return; 
     }
 
-    if (session.current_bookings >= session.max_capacity) {
-      alert('Sajnos ez az óra már betelt.');
-      return;
-    }
-
-    if (confirm(`Szeretnéd lefoglalni ezt az órát: ${session.name}?`)) {
-      this.bookingService.bookClass(session.id).subscribe({
-        next: () => {
-          alert('Sikeres foglalás! Várunk szeretettel.');
-          this.loadClasses();
-        },
-        error: (err) => {
-          alert(err.error?.detail || 'Hiba történt a foglalás során.');
-        }
-      });
-    }
+    this.bookingService.bookClass(this.selectedSession.id).subscribe({
+      next: () => {
+        this.selectedSession = null; 
+        this.showSuccessModal = true; 
+        this.loadClasses(); 
+      },
+      error: (err) => {
+        this.toastService.show(err.error?.detail || 'Hiba történt a foglalás során.', 'error');
+      }
+    });
   }
 }

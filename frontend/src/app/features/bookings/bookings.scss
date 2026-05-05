@@ -1,0 +1,91 @@
+.bookings-container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: var(--spacing-xl) var(--spacing-md);
+}
+
+.bookings-header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl);
+  h1 { color: var(--secondary-color); margin-bottom: 8px; }
+  p { color: #666; }
+}
+
+.bookings-list, .swap-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.booking-card, .class-card {
+  background: white;
+  border-radius: var(--border-radius-lg);
+  padding: var(--spacing-lg);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  transition: all 0.2s ease;
+
+  &.warning-border { border-left: 5px solid #f59e0b; }
+  &.confirm-mode { border-color: var(--error-color); background: #fff1f2; }
+  &.swap-confirm-active { border-color: var(--primary-color); background: #fdf2f2; }
+}
+
+.booking-info, .class-info {
+  h3 { margin: 0 0 5px 0; color: var(--text-dark); }
+  .time { font-weight: bold; color: var(--secondary-color); margin-bottom: 5px; }
+  .meta, .details { font-size: 0.9rem; color: #64748b; }
+  .notice { color: #d97706; font-weight: 600; display: block; margin-top: 5px; }
+}
+
+.booking-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.inline-confirmation {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  animation: fadeIn 0.2s ease;
+  p { margin: 0; font-weight: bold; color: var(--text-dark); }
+}
+
+.confirm-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+/* Gombok */
+button {
+  padding: 10px 20px;
+  border-radius: var(--border-radius-md);
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-primary-sm { background: var(--primary-color); color: white; padding: 8px 16px; }
+.btn-danger-sm { background: var(--error-color); color: white; padding: 8px 16px; }
+.btn-secondary-sm { background: #e2e8f0; color: #475569; padding: 8px 16px; }
+
+.btn-modify { background: var(--primary-color); color: white; }
+.btn-cancel { background: transparent; color: var(--error-color); border: 1px solid var(--error-color); }
+.btn-swap { background: var(--secondary-color); color: white; }
+.btn-back { background: none; color: var(--secondary-color); margin-bottom: 20px; padding: 0; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+@media (max-width: 600px) {
+  .booking-card, .class-card, .inline-confirmation {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px;
+  }
+  .booking-actions, .confirm-buttons, .inline-confirmation { width: 100%; }
+  .booking-actions button, .confirm-buttons button { flex: 1; }
+}

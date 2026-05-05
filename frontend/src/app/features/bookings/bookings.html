@@ -1,0 +1,80 @@
+<div class="bookings-container">
+  <div class="bookings-header">
+    <h1>{{ isModifying ? 'Válassz új időpontot' : 'Saját foglalásaim' }}</h1>
+    <p>{{ isModifying ? 'A módosításhoz kattints a kívánt óra melletti Foglalás gombra.' : 'Itt kezelheted a meglévő foglalásaidat.' }}</p>
+  </div>
+
+  <div class="view-content">
+    @if (!isModifying) {
+      <div class="bookings-list">
+        @if (myBookings.length === 0) {
+          <div class="empty-state">
+            <p>Jelenleg nincs aktív foglalásod.</p>
+            <a routerLink="/foglalas" class="btn-primary">Keresek egy órát</a>
+          </div>
+        } @else {
+          @for (booking of myBookings; track booking.id) {
+            <div class="booking-card" [class.warning-border]="isWithin24Hours(booking.start_time)" [class.confirm-mode]="confirmingCancelId === booking.id">
+              
+              @if (confirmingCancelId !== booking.id) {
+                <div class="booking-info">
+                  <h3>{{ booking.class_name }}</h3>
+                  <p class="time">{{ booking.start_time | date:'yyyy.MM.dd. HH:mm' }} ({{ booking.start_time | date:'EEEE' }})</p>
+                  <p class="meta"><span>Helyszín: {{ booking.location }}</span></p>
+                  @if (isWithin24Hours(booking.start_time)) {
+                    <small class="notice">24 órán belül csak módosítás lehetséges.</small>
+                  }
+                </div>
+                <div class="booking-actions">
+                  <button class="btn-modify" (click)="startModification(booking.id)">Módosítás</button>
+                  @if (!isWithin24Hours(booking.start_time)) {
+                    <button class="btn-cancel" (click)="confirmingCancelId = booking.id">Lemondás</button>
+                  }
+                </div>
+              } @else {
+                <div class="inline-confirmation">
+                  <p>Biztosan lemondod ezt az órát?</p>
+                  <div class="confirm-buttons">
+                    <button class="btn-secondary-sm" (click)="confirmingCancelId = null">Mégsem</button>
+                    <button class="btn-danger-sm" (click)="cancelBooking(booking.id)">Igen, lemondom</button>
+                  </div>
+                </div>
+              }
+
+            </div>
+          }
+        }
+      </div>
+    } @else {
+      <div class="modification-view">
+        <button class="btn-back" (click)="isModifying = false">← Vissza a foglalásaimhoz</button>
+        <div class="swap-list">
+          @for (item of availableClasses; track item.id) {
+            <div class="class-card" [class.swap-confirm-active]="confirmingSwapId === item.id">
+              
+              @if (confirmingSwapId !== item.id) {
+                <div class="class-info">
+                  <h3>{{ item.name }}</h3>
+                  <p class="time">{{ item.start_time | date:'yyyy.MM.dd., HH:mm' }} ({{ item.start_time | date:'EEEE' }})</p>
+                  <p class="details">
+                    {{ getDifficultyLabel(item.difficulty) }} | {{ item.location }}
+                  </p>
+                </div>
+                <button class="btn-swap" (click)="confirmingSwapId = item.id">Erre az időpontra módosítom</button>
+              } @else {
+                <div class="inline-confirmation">
+                  <p>Átfoglalod erre az időpontra?</p>
+                  <div class="confirm-buttons">
+                    <button class="btn-secondary-sm" (click)="confirmingSwapId = null">Mégsem</button>
+                    <button class="btn-primary-sm" (click)="confirmSwap(item.id)">Igen, átfoglalom</button>
+                  </div>
+                </div>
+              }
+
+            </div>
+          }
+        </div>
+      </div>
+    }
+  </div>
+</div>
