@@ -30,7 +30,7 @@
           </div>
 
           <div class="danger-zone">
-            <button class="btn-danger" (click)="deleteAccount()">Fiók törlése</button>
+            <button class="btn-danger" (click)="openDeleteModal()">Fiók törlése</button>
           </div>
         } @else if (isEditing) {
           <form [formGroup]="profileForm" (ngSubmit)="saveProfile()" class="edit-form">
@@ -71,7 +71,7 @@
         @if (myBookings.length === 0) {
           <div class="empty-state">
             <p>Jelenleg nincs aktív foglalásod.</p>
-            <a routerLink="/foglalas" class="btn-primary">Időpont foglalás</a>
+            <a routerLink="/book" class="btn-primary">Időpont foglalás</a>
           </div>
         } @else {
           <div class="booking-list">
@@ -90,4 +90,18 @@
     </div>
 
   </div>
+
+  @if (isDeleteModalOpen) {
+    <div class="modal-backdrop" (click)="closeDeleteModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-icon danger-icon">⚠️</div>
+        <h3 class="danger-text">Fiók végleges törlése</h3>
+        <p>Biztosan törölni szeretnéd a fiókodat? Ezt a műveletet <strong>NEM</strong> lehet visszavonni, és minden meglévő foglalásod elvész!</p>
+        <div class="modal-actions">
+          <button class="btn-secondary" (click)="closeDeleteModal()">Mégsem</button>
+          <button class="btn-danger" (click)="deleteAccount()">Igen, törlöm</button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

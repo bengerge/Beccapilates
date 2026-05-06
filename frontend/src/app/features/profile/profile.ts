@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, AbstractContro
 import { AuthService } from '../../core/services/auth';
 import { ClassService } from '../../core/services/class';
 import { BookingService } from '../../core/services/booking';
+import { ToastService } from '../../core/services/toast';
 
 export const passwordsMatchValidator: ValidatorFn = (control: AbstractControl): ValidationErrors | null => {
   const password = control.get('password');
@@ -25,13 +26,18 @@ export const passwordsMatchValidator: ValidatorFn = (control: AbstractControl): 
 export class ProfileComponent implements OnInit {
   private fb = inject(FormBuilder);
   private router = inject(Router);
+  private toastService = inject(ToastService);
+  
   authService = inject(AuthService);
   classService = inject(ClassService);
   bookingService = inject(BookingService);
+  
   fullProfile: any = null;
   myBookings: any[] = [];
   isEditing = false;
   profileForm!: FormGroup;
+
+  isDeleteModalOpen = false;
 
   ngOnInit() {
     this.initForm();
@@ -94,24 +100,34 @@ export class ProfileComponent implements OnInit {
 
     this.authService.updateProfile(updateData).subscribe({
       next: () => {
-        alert('Sikeresen frissítetted a profilodat!');
+        this.toastService.show('Sikeresen frissítetted a profilodat!', 'success');
         this.isEditing = false;
         this.loadProfile();
       },
-      error: () => alert('Hiba történt a frissítés során.')
+      error: () => this.toastService.show('Hiba történt a frissítés során.', 'error')
     });
   }
 
+  openDeleteModal() {
+    this.isDeleteModalOpen = true;
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+  }
+
   deleteAccount() {
-    if (confirm('Biztosan törölni szeretnéd a fiókodat? Ezt a műveletet NEM lehet visszavonni!')) {
-      this.authService.deleteAccount().subscribe({
-        next: () => {
-          alert('Fiókodat sikeresen töröltük.');
-          this.authService.logout();
-          this.router.navigate(['/']);
-        },
-        error: () => alert('Hiba történt a fiók törlése során.')
-      });
-    }
+    this.authService.deleteAccount().subscribe({
+      next: () => {
+        this.toastService.show('Fiókodat sikeresen töröltük.', 'success');
+        this.isDeleteModalOpen = false;
+        this.authService.logout();
+        this.router.navigate(['/']);
+      },
+      error: () => {
+        this.toastService.show('Hiba történt a fiók törlése során.', 'error');
+        this.isDeleteModalOpen = false;
+      }
+    });
   }
 }

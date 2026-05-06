@@ -52,7 +52,22 @@ export class AdminBookingsComponent implements OnInit {
       start_time: ['', Validators.required],
       end_time: ['', Validators.required]
     });
+
+    this.editForm.get('start_time')?.valueChanges.subscribe(startTime => {
+      if (startTime) {
+        const startDate = new Date(startTime);
+        startDate.setHours(startDate.getHours() + 1); // +1 óra hozzáadása
+        
+        // Helyi időzónához igazított formátum (YYYY-MM-DDTHH:mm), amit a datetime-local input elfogad
+        const tzOffset = startDate.getTimezoneOffset() * 60000;
+        const localISOTime = new Date(startDate.getTime() - tzOffset).toISOString().slice(0, 16);
+        
+        // Csendben (emitEvent: false) frissítjük a vége mezőt, hogy ne okozzunk végtelen ciklust
+        this.editForm.patchValue({ end_time: localISOTime }, { emitEvent: false });
+      }
+    });
   }
+  
 
   loadClasses() {
     this.adminService.getClasses().subscribe({

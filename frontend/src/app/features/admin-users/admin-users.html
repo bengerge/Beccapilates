@@ -24,7 +24,7 @@
               <td>
                 <select 
                   [value]="user.role" 
-                  (change)="changeRole(user.id, $event)"
+                  (change)="openConfirmModal(user.id, $event)"
                   [disabled]="user.id === currentUserId"
                   [class.admin-select]="user.role === 'admin'">
                   <option value="user">Vendég</option>
@@ -40,4 +40,18 @@
       </table>
     </div>
   </div>
+
+  @if (isModalOpen) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-icon">⚠️</div>
+        <h3>Megerősítés szükséges</h3>
+        <p>Biztosan módosítani szeretnéd ennek a felhasználónak a jogosultságát?</p>
+        <div class="modal-actions">
+          <button class="btn-secondary" (click)="closeModal()">Mégsem</button>
+          <button class="btn-primary" (click)="confirmRoleChange()">Igen, módosítom</button>
+        </div>
+      </div>
+    </div>
+  }
 </div>

@@ -258,3 +258,103 @@
     cursor: not-allowed;
   }
 }
+
+/* --- Custom Modal Styles --- */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.75); /* Kicsit sötétebb háttér a drámai hatásért */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+.modal-card {
+  background: white;
+  padding: 30px;
+  border-radius: var(--border-radius-lg);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  animation: slideUp 0.3s ease-out forwards;
+
+  .modal-icon {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    
+    &.danger-icon {
+      color: var(--error-color, #dc2626); /* Alapértelmezett piros, ha nincs változó */
+    }
+  }
+
+  h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    
+    &.danger-text {
+      color: var(--error-color, #dc2626);
+    }
+  }
+
+  p {
+    color: #475569;
+    margin-bottom: 25px;
+    line-height: 1.5;
+
+    strong {
+      color: var(--text-dark);
+      font-weight: 800;
+    }
+  }
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+
+  button {
+    padding: 12px 24px;
+    border-radius: var(--border-radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s;
+    flex: 1; /* Hogy egyforma szélesek legyenek a gombok */
+  }
+
+  .btn-secondary {
+    background-color: #f1f5f9;
+    color: #475569;
+
+    &:hover {
+      background-color: #e2e8f0;
+    }
+  }
+
+  .btn-danger {
+    background-color: var(--error-color, #dc2626);
+    color: white;
+
+    &:hover {
+      background-color: #b91c1c; /* Sötétebb piros hoverre */
+      transform: translateY(-2px);
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
