@@ -3,6 +3,7 @@ version: '3.8'
 services:
   db:
     image: mysql:8.0
+    container_name: pilates-MySQLDB
     env_file:
       - .env
     ports:

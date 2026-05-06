@@ -1,30 +1,29 @@
-# Python (Backend)
-__pycache__/
-*.py[cod]
-*$py.class
+node_modules/
+dist/
+.angular/
+.sass-cache/
+coverage/
+tmp/
+out/
+
 venv/
 .venv/
 env/
+__pycache__/
+*.py[cod]
+*$py.class
+
 .env
 *.db
 *.sqlite3
+*.log
 
-# Angular (Frontend)
-node_modules/
-.angular/
-dist/
-tmp/
-out/
-.sass-cache/
-connect.lock
-coverage/
-.vscode/
 .idea/
-
-# Operációs rendszer fájlok
+.vscode/
 .DS_Store
 Thumbs.db
 
-# Felhasználó által kért korlátozás (Média fájlok)
-src/assets/images/
-backend/static/images/
+src/assets/images/*
+!src/assets/images/.gitkeep
+backend/static/images/*
+!backend/static/images/.gitkeep
