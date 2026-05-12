@@ -6,8 +6,6 @@ services:
     container_name: pilates-MySQLDB
     env_file:
       - .env
-    ports:
-      - "3306:3306"
     volumes:
       - db_data:/var/lib/mysql
     healthcheck:
@@ -15,6 +13,7 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    restart: always
 
   backend:
     build: ./backend
@@ -25,12 +24,11 @@ services:
       - .env
     environment:
       DATABASE_URL: mysql+pymysql://${MYSQL_USER}:${MYSQL_PASSWORD}@db:3306/${MYSQL_DATABASE}
-    volumes:
-      - ./backend:/app
     depends_on:
       db:
         condition: service_healthy
-  
+    restart: always
+
   frontend:
     build: ./frontend
     container_name: pilates-frontend
