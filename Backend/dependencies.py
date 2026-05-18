@@ -1,4 +1,4 @@
-from fastapi import Depends, HTTPException, status
+from fastapi import Depends, HTTPException, Request, status
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 from jose import jwt, JWTError
@@ -8,13 +8,24 @@ from database import get_db
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="auth/login")
 
-def get_current_user(token: str = Depends(oauth2_scheme), db: Session = Depends(get_db)):
+def get_token_from_cookie(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Nincs hitelesítve (Hiányzó süti)",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    return token.replace("Bearer ", "")
+
+def get_current_user(token: str = Depends(get_token_from_cookie), db: Session = Depends(get_db)):
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
-        detail="Érvénytelen vagy lejárt hitelesítési adatok",
+        detail="Érvénytelen hitelesítési adatok",
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
+        # A payload dekódolásához a security.py-ban lévő kulcsot használjuk
         payload = jwt.decode(token, security.SECRET_KEY, algorithms=[security.ALGORITHM])
         email: str = payload.get("sub")
         if email is None:

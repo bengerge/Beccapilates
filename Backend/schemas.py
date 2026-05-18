@@ -62,3 +62,7 @@ class UserUpdate(BaseModel):
     email: Optional[str] = None
     phone: Optional[str] = None
     password: Optional[str] = None
+
+class ExternalBookingCreate(BaseModel):
+    class_id: int
+    guest_name: str

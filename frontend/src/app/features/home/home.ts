@@ -32,7 +32,7 @@ export class HomeComponent implements OnInit {
   }
 
   book(classId: number) {
-    if (!this.authService.getToken()) {
+    if (!this.authService.getCurrentUser()) {
       this.uiService.openAuthModal();
       return;
     }

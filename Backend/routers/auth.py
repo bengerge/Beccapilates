@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, Request, status, Response
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.orm import Session
 from datetime import timedelta
 import models, schemas, security
 from database import get_db
 from dependencies import get_current_user
+import secrets
 
 router = APIRouter(prefix="/auth", tags=["Authentication"])
 
@@ -34,21 +35,35 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     db.refresh(new_user)
     return new_user
 
-@router.post("/login", response_model=schemas.Token)
-def login(form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.email == form_data.username).first()
-    if not user or not security.verify_password(form_data.password, user.hashed_password):
-        raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Helytelen email vagy jelszó",
-            headers={"WWW-Authenticate": "Bearer"},
-        )
+@router.post("/login")
+def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), db: Session = Depends(get_db)):
+    # Hozzáadtuk a security. prefixet a metódusokhoz
+    user = security.authenticate_user(db, form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=400, detail="Helytelen adatok")
+
+    access_token = security.create_access_token(data={"sub": user.email})
     
-    access_token_expires = timedelta(minutes=security.ACCESS_TOKEN_EXPIRE_MINUTES)
-    access_token = security.create_access_token(
-        data={"sub": user.email, "role": user.role}, expires_delta=access_token_expires
+    response.set_cookie(
+        key="access_token",
+        value=f"Bearer {access_token}",
+        httponly=True,
+        secure=False, # Lokális gépen False, éles szerveren (HTTPS) True kell legyen!
+        samesite="lax",
+        max_age=1800
     )
-    return {"access_token": access_token, "token_type": "bearer"}
+    return {"message": "Sikeres bejelentkezés"}
+
+@router.post("/logout")
+def logout(response: Response):
+    response.delete_cookie(key="access_token")
+    return {"message": "Sikeres kijelentkezés"}
+
+def get_token_from_cookie(request: Request):
+    token = request.cookies.get("access_token")
+    if not token:
+        raise HTTPException(status_code=401, detail="Nincs hitelesítve")
+    return token.replace("Bearer ", "")
 
 @router.get("/me", response_model=schemas.UserResponse)
 def get_my_profile(current_user: models.User = Depends(get_current_user)):

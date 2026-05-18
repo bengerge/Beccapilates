@@ -45,4 +45,11 @@ export class AdminService {
   deleteBooking(bookingId: number): Observable<any> {
     return this.http.delete(`${this.ADMIN_API_URL}/bookings/${bookingId}`, { responseType: 'text' });
   }
+
+  addExternalBooking(classId: number, guestName: string): Observable<any> {
+    return this.http.post<any>(`${this.ADMIN_API_URL}/external`, {
+      class_id: classId,
+      guest_name: guestName
+    });
+  }
 }

@@ -1,17 +1,21 @@
 import { inject } from '@angular/core';
-import { CanActivateFn, Router } from '@angular/router';
+import { Router, CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth';
-import { UiService } from '../services/ui';
+import { map } from 'rxjs';
 
 export const authGuard: CanActivateFn = () => {
   const authService = inject(AuthService);
   const router = inject(Router);
-  const uiService = inject(UiService);
 
-  if (authService.getToken()) {
-    return true;
-  }
-
-  uiService.openAuthModal();
-  return router.createUrlTree(['/']);
+  // Várjuk meg, amíg a backend visszaigazolja a sütit
+  return authService.checkAuthStatus().pipe(
+    map(isAuthenticated => {
+      if (isAuthenticated) {
+        return true;
+      } else {
+        router.navigate(['/login']);
+        return false;
+      }
+    })
+  );
 };

@@ -54,37 +54,54 @@
           <p class="modal-detail">📊 <strong>Szint:</strong> {{ getDifficulty(selectedClass.difficulty) }}</p>
           
           <div class="info-box attendees-box">
-            <strong>👥 Résztvevők ({{ attendees.length }}/{{ selectedClass.max_capacity }})</strong>
-            <div class="attendees-list">
-  @for (user of attendees; track user.booking_id) {
-    <div class="attendee-item" [class.confirm-mode]="confirmingAttendeeId === user.booking_id">
-      
-      @if (confirmingAttendeeId !== user.booking_id) {
-        <div class="attendee-info">
-          <span class="attendee-name">{{ user.name }}</span>
-          <div class="attendee-contact">
-            <a href="mailto:{{ user.email }}">✉️ {{ user.email }}</a>
-            <a href="tel:{{ user.phone }}">📞 {{ user.phone }}</a>
-          </div>
-        </div>
-        <button class="btn-remove-user" (click)="confirmingAttendeeId = user.booking_id" title="Vendég eltávolítása">
-          &times;
-        </button>
-      } @else {
-        <div class="confirm-removal">
-          <span class="confirm-text">Eltávolítod a vendéget?</span>
-          <div class="confirm-actions">
-            <button class="btn-cancel-small" (click)="confirmingAttendeeId = null">Mégsem</button>
-            <button class="btn-confirm-small" (click)="removeAttendee(user.booking_id)">Igen</button>
-          </div>
-        </div>
-      }
+            <div class="attendees-header-flex">
+              <strong>👥 Résztvevők ({{ attendees.length }}/{{ selectedClass.max_capacity }})</strong>
+            </div>
 
-    </div>
-  } @empty {
-    <p class="empty-text">Még senki nem foglalt erre az órára.</p>
-  }
-</div>
+            <div class="external-booking-form">
+              <input type="text" [(ngModel)]="newExternalName" placeholder="Külsős vendég neve (opcionális)">
+              <button class="btn-icon-plus" (click)="addExternalGuest()" [disabled]="attendees.length >= selectedClass.max_capacity" title="Külsős vendég hozzáadása">
+                +
+              </button>
+            </div>
+
+            <div class="attendees-list">
+              @for (user of attendees; track user.booking_id) {
+                <div class="attendee-item" [class.confirm-mode]="confirmingAttendeeId === user.booking_id">
+                  
+                  @if (confirmingAttendeeId !== user.booking_id) {
+                    <div class="attendee-info">
+                      <span class="attendee-name">
+                        {{ user.name || 'Külsős vendég' }}
+                        @if (!user.email) {
+                          <span class="badge-external">Külsős</span>
+                        }
+                      </span>
+                      @if (user.email) {
+                        <div class="attendee-contact">
+                          <a href="mailto:{{ user.email }}">✉️ {{ user.email }}</a>
+                          <a href="tel:{{ user.phone }}">📞 {{ user.phone }}</a>
+                        </div>
+                      }
+                    </div>
+                    <button class="btn-remove-user" (click)="confirmingAttendeeId = user.booking_id" title="Vendég eltávolítása">
+                      &times;
+                    </button>
+                  } @else {
+                    <div class="confirm-removal">
+                      <span class="confirm-text">Eltávolítod a vendéget?</span>
+                      <div class="confirm-actions">
+                        <button class="btn-cancel-small" (click)="confirmingAttendeeId = null">Mégsem</button>
+                        <button class="btn-confirm-small" (click)="removeAttendee(user.booking_id)">Igen</button>
+                      </div>
+                    </div>
+                  }
+
+                </div>
+              } @empty {
+                <p class="empty-text">Még senki nem foglalt erre az órára.</p>
+              }
+            </div>
           </div>
         } @else {
           <form [formGroup]="editForm" class="edit-form">

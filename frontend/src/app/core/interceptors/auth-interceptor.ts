@@ -1,19 +1,22 @@
-import { HttpInterceptorFn } from '@angular/common/http';
+import { HttpInterceptorFn, HttpErrorResponse } from '@angular/common/http';
 import { inject } from '@angular/core';
-import { AuthService } from '../services/auth';
+import { Router } from '@angular/router';
+import { catchError, throwError } from 'rxjs';
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
-  const authService = inject(AuthService);
-  const token = authService.getToken();
+  const router = inject(Router);
 
-  if (token) {
-    const cloned = req.clone({
-      setHeaders: {
-        Authorization: `Bearer ${token}`
+  // Nincs többé Authorization header! Helyette bekapcsoljuk a sütik küldését:
+  const modifiedReq = req.clone({
+    withCredentials: true
+  });
+
+  return next(modifiedReq).pipe(
+    catchError((error: HttpErrorResponse) => {
+      if (error.status === 401) {
+        router.navigate(['/login']);
       }
-    });
-    return next(cloned);
-  }
-
-  return next(req);
+      return throwError(() => error);
+    })
+  );
 };

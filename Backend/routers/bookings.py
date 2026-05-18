@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
+from schemas import ExternalBookingCreate
 import models
 from database import get_db
 from dependencies import get_current_user

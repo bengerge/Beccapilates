@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { BehaviorSubject, tap } from 'rxjs';
+import { BehaviorSubject, Observable, tap, catchError, map, of } from 'rxjs';
 import { Router } from '@angular/router';
 
 @Injectable({
@@ -11,10 +11,11 @@ export class AuthService {
   private router = inject(Router);
   private readonly API_URL = '/api/auth';
 
-  private currentUserSubject = new BehaviorSubject<any>(this.getUserFromToken());
+
+  private currentUserSubject = new BehaviorSubject<any>(null);
   currentUser$ = this.currentUserSubject.asObservable();
 
-  login(credentials: any) {
+  login(credentials: any): Observable<any> {
     const body = new URLSearchParams();
     body.set('username', credentials.email);
     body.set('password', credentials.password);
@@ -23,10 +24,13 @@ export class AuthService {
       'Content-Type': 'application/x-www-form-urlencoded'
     });
 
-    return this.http.post<any>(`${this.API_URL}/login`, body.toString(), { headers }).pipe(
-      tap(res => {
-        localStorage.setItem('token', res.access_token);
-        this.currentUserSubject.next(this.getUserFromToken());
+    return this.http.post<any>(`${this.API_URL}/login`, body.toString(), { 
+      headers,
+      withCredentials: true
+    }).pipe(
+      tap(() => {
+
+        this.checkAuthStatus().subscribe();
       })
     );
   }
@@ -36,37 +40,47 @@ export class AuthService {
   }
 
   logout() {
-    localStorage.removeItem('token');
+
+    this.http.post(`${this.API_URL}/logout`, {}, { withCredentials: true }).subscribe({
+      next: () => this.clearSession(),
+      error: () => this.clearSession()
+    });
+  }
+
+  private clearSession() {
     this.currentUserSubject.next(null);
     this.router.navigate(['/']);
   }
 
-  getToken(): string | null {
-    return localStorage.getItem('token');
+
+  checkAuthStatus(): Observable<boolean> {
+    return this.http.get<any>(`${this.API_URL}/me`, { withCredentials: true }).pipe(
+      tap(user => {
+
+        this.currentUserSubject.next(user);
+      }),
+      map(() => true),
+      catchError(() => {
+
+        this.currentUserSubject.next(null);
+        return of(false);
+      })
+    );
   }
 
-  private getUserFromToken() {
-    const token = this.getToken();
-    if (!token) return null;
-    
-    try {
-      const payload = token.split('.')[1];
-      const decoded = JSON.parse(atob(payload));
-      return decoded;
-    } catch (e) {
-      return null;
-    }
+  getCurrentUser() {
+    return this.currentUserSubject.value;
   }
-  
+
   getProfile() {
-    return this.http.get<any>(`${this.API_URL}/me`);
+    return this.http.get<any>(`${this.API_URL}/me`, { withCredentials: true });
   }
 
   updateProfile(data: any) {
-    return this.http.put(`${this.API_URL}/me`, data);
+    return this.http.put(`${this.API_URL}/me`, data, { withCredentials: true });
   }
 
   deleteAccount() {
-    return this.http.delete(`${this.API_URL}/me`);
+    return this.http.delete(`${this.API_URL}/me`, { withCredentials: true });
   }
 }

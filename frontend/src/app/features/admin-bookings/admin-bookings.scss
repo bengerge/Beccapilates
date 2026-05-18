@@ -433,3 +433,71 @@
     }
   }
 }
+.attendees-header-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  
+  strong {
+    margin-bottom: 0 !important;
+  }
+}
+
+.external-booking-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  background: white;
+  padding: 10px;
+  border-radius: var(--border-radius-md);
+  border: 1px solid #e2e8f0;
+
+  input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--border-radius-sm);
+    outline: none;
+    font-family: inherit;
+
+    &:focus {
+      border-color: var(--primary-color);
+    }
+  }
+
+  .btn-icon-plus {
+    background-color: #10b981;
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: var(--border-radius-sm);
+    font-size: 1.5rem;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    &:hover:not(:disabled) {
+      background-color: #059669;
+    }
+
+    &:disabled {
+      background-color: #cbd5e1;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.badge-external {
+  background-color: #f59e0b;
+  color: white;
+  font-size: 0.7rem;
+  padding: 2px 6px;
+  border-radius: 12px;
+  margin-left: 8px;
+  vertical-align: middle;
+}

@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy.orm import Session
 from typing import List, Dict, Any
 from pydantic import BaseModel
+from schemas import ExternalBookingCreate
 
 import models
 import schemas
@@ -72,17 +73,29 @@ def delete_class(class_id: int, db: Session = Depends(get_db), admin_user: model
 
 @router.get("/classes/{class_id}/attendees")
 def get_class_attendees(class_id: int, db: Session = Depends(get_db), admin_user: models.User = Depends(verify_admin)):
-    bookings = db.query(models.Booking).filter(models.Booking.class_session_id == class_id).all()
+    bookings = db.query(models.Booking, models.User)\
+                .outerjoin(models.User, models.Booking.user_id == models.User.id)\
+                .filter(models.Booking.class_session_id == class_id)\
+                .all()
+                
     result = []
-    for b in bookings:
-        user = db.query(models.User).filter(models.User.id == b.user_id).first()
+    
+    for booking, user in bookings: 
         if user:
             result.append({
-                "booking_id": b.id,
+                "booking_id": booking.id,
                 "name": user.name or "Nincs megadva",
                 "email": user.email,
                 "phone": user.phone or "Nincs megadva"
             })
+        else:
+            result.append({
+                "booking_id": booking.id,
+                "name": booking.guest_name or "Külsős vendég",
+                "email": None,
+                "phone": None
+            })
+            
     return result
 
 @router.delete("/bookings/{booking_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -111,3 +124,34 @@ def update_user_role(user_id: int, role_data: RoleUpdate, db: Session = Depends(
     user_to_update.role = role_data.role
     db.commit()
     return {"detail": "Jogosultság sikeresen módosítva."}
+
+@router.post("/external")
+def create_external_booking(
+    booking_data: ExternalBookingCreate, 
+    db: Session = Depends(get_db)
+):
+    db_class = db.query(models.ClassSession).filter(models.ClassSession.id == booking_data.class_id).first()
+    
+    if not db_class:
+        raise HTTPException(status_code=404, detail="Az óra nem található.")
+        
+    current_bookings = db.query(models.Booking).filter(models.Booking.class_session_id == booking_data.class_id).count()
+    
+    if current_bookings >= db_class.max_capacity:
+        raise HTTPException(status_code=400, detail="Az óra létszáma már betelt.")
+
+    new_booking = models.Booking(
+        class_session_id=booking_data.class_id, 
+        user_id=None,
+        guest_name=booking_data.guest_name
+    )
+    
+    db.add(new_booking)
+    
+    if hasattr(db_class, 'current_bookings'):
+        db_class.current_bookings += 1
+        
+    db.commit()
+    db.refresh(new_booking)
+    
+    return {"message": "Külsős vendég rögzítve.", "booking_id": new_booking.id}

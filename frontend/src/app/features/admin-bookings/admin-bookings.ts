@@ -1,13 +1,13 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule, FormsModule, Validators } from '@angular/forms';
 import { AdminService } from '../../core/services/admin';
 import { ToastService } from '../../core/services/toast';
 
 @Component({
   selector: 'app-admin-bookings',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './admin-bookings.html',
   styleUrls: ['./admin-bookings.scss']
 })
@@ -27,12 +27,12 @@ export class AdminBookingsComponent implements OnInit {
   isConfirmingDelete = false;
   
   confirmingAttendeeId: number | null = null;
+  newExternalName: string = '';
   
   editForm!: FormGroup;
 
   difficultyMap: Record<string, string> = {
     'beginner': 'Kezdő',
-    'intermediate': 'Középhaladó',
     'advanced': 'Haladó'
   };
 
@@ -56,18 +56,13 @@ export class AdminBookingsComponent implements OnInit {
     this.editForm.get('start_time')?.valueChanges.subscribe(startTime => {
       if (startTime) {
         const startDate = new Date(startTime);
-        startDate.setHours(startDate.getHours() + 1); // +1 óra hozzáadása
-        
-        // Helyi időzónához igazított formátum (YYYY-MM-DDTHH:mm), amit a datetime-local input elfogad
+        startDate.setHours(startDate.getHours() + 1);
         const tzOffset = startDate.getTimezoneOffset() * 60000;
         const localISOTime = new Date(startDate.getTime() - tzOffset).toISOString().slice(0, 16);
-        
-        // Csendben (emitEvent: false) frissítjük a vége mezőt, hogy ne okozzunk végtelen ciklust
         this.editForm.patchValue({ end_time: localISOTime }, { emitEvent: false });
       }
     });
   }
-  
 
   loadClasses() {
     this.adminService.getClasses().subscribe({
@@ -124,6 +119,7 @@ export class AdminBookingsComponent implements OnInit {
     this.isEditing = false;
     this.isConfirmingDelete = false;
     this.confirmingAttendeeId = null;
+    this.newExternalName = '';
     this.adminService.getAttendees(session.id).subscribe({
       next: (data) => this.attendees = data,
       error: () => this.toastService.show('Hiba a résztvevők betöltésekor.', 'error')
@@ -173,6 +169,37 @@ export class AdminBookingsComponent implements OnInit {
         this.closeModal();
       },
       error: () => this.toastService.show('Hiba az óra törlésekor.', 'error')
+    });
+  }
+
+  addExternalGuest() {
+    if (this.attendees.length >= this.selectedClass.max_capacity) {
+      this.toastService.show('Az óra létszáma betelt!', 'error');
+      return;
+    }
+
+    const guestName = this.newExternalName.trim() || 'Külsős vendég';
+    this.adminService.addExternalBooking(this.selectedClass.id, guestName).subscribe({
+      next: () => {
+        this.toastService.show('Vendég sikeresen rögzítve.', 'success');
+        this.newExternalName = '';
+        
+        // 1. Frissítjük a fő listát (hogy a kártyákon jó legyen a szám)
+        this.loadClasses(); 
+        
+        // 2. ÚJRA lekérjük a résztvevőket a szerverről
+        this.adminService.getAttendees(this.selectedClass.id).subscribe({
+          next: (data) => {
+            this.attendees = data; // Ez frissíti a listát és a számlálót is!
+            // 3. Manuálisan növeljük a selectedClass számlálóját a UI-hoz
+            if(this.selectedClass) {
+               this.selectedClass.current_bookings = data.length;
+            }
+          },
+          error: () => this.toastService.show('Hiba a résztvevők frissítésekor.', 'error')
+        });
+      },
+      error: () => this.toastService.show('Hiba a vendég rögzítésekor.', 'error')
     });
   }
 
