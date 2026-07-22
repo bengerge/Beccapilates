@@ -52,4 +52,28 @@ export class AdminService {
       guest_name: guestName
     });
   }
+
+  getLocations(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.ADMIN_API_URL}/locations`);
+  }
+
+  createLocation(name: string): Observable<any> {
+    return this.http.post(`${this.ADMIN_API_URL}/locations`, { name });
+  }
+
+  deleteLocation(locationId: number): Observable<any> {
+    return this.http.delete(`${this.ADMIN_API_URL}/locations/${locationId}`);
+  }
+
+  getDifficulties(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.ADMIN_API_URL}/difficulties`);
+  }
+
+  createDifficulty(name: string): Observable<any> {
+    return this.http.post(`${this.ADMIN_API_URL}/difficulties`, { name });
+  }
+
+  deleteDifficulty(difficultyId: number): Observable<any> {
+    return this.http.delete(`${this.ADMIN_API_URL}/difficulties/${difficultyId}`);
+  }
 }

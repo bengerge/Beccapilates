@@ -4,6 +4,8 @@ services:
   db:
     image: mysql:8.0
     container_name: pilates-MySQLDB
+    ports:
+      - "3306:3306"
     env_file:
       - .env
     volumes:

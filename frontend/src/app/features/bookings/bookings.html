@@ -10,7 +10,8 @@
         @if (myBookings.length === 0) {
           <div class="empty-state">
             <p>Jelenleg nincs aktív foglalásod.</p>
-            <a routerLink="/foglalas" class="btn-primary">Keresek egy órát</a>
+            <div class="hero-buttons"><a routerLink="/foglalas" class="btn-primary">Keresek egy órát</a></div>
+            
           </div>
         } @else {
           @for (booking of myBookings; track booking.id) {
@@ -57,7 +58,7 @@
                   <h3>{{ item.name }}</h3>
                   <p class="time">{{ item.start_time | date:'yyyy.MM.dd., HH:mm' }} ({{ item.start_time | date:'EEEE' }})</p>
                   <p class="details">
-                    {{ getDifficultyLabel(item.difficulty) }} | {{ item.location }}
+                    {{ item.difficulty }} | {{ item.location }}
                   </p>
                 </div>
                 <button class="btn-swap" (click)="confirmingSwapId = item.id">Erre az időpontra módosítom</button>

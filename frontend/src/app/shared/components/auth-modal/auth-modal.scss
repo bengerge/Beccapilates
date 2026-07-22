@@ -144,6 +144,33 @@ input.ng-invalid.ng-touched {
   }
 }
 
+.terms-group {
+  margin-top: 15px;
+  
+  .checkbox-container {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 10px;
+    font-size: 0.85rem;
+    font-weight: normal;
+    
+    input[type="checkbox"] {
+      width: auto;
+      margin-top: 3px;
+    }
+    
+    a {
+      color: var(--primary-color);
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(-5px); }
   to { opacity: 1; transform: translateY(0); }

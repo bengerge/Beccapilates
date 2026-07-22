@@ -66,20 +66,33 @@
   }
 }
 
-.map-placeholder {
-  background-color: #eaeaea;
+.maps-container {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg);
+}
+
+.map-wrapper {
+  background-color: var(--background-light);
   border-radius: var(--border-radius-lg);
   box-shadow: var(--shadow-card);
   overflow: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 400px;
-  
-  .map-content {
-    color: #888;
-    font-weight: bold;
-    font-size: 1.2rem;
+  padding-bottom: 0;
+
+  h4 {
+    margin: 0;
+    padding: var(--spacing-md);
+    background-color: var(--primary-color);
+    color: white;
+    font-size: 1.1rem;
+    text-align: center;
+  }
+
+  iframe {
+    display: block;
+    width: 100%;
+    border-bottom-left-radius: var(--border-radius-lg);
+    border-bottom-right-radius: var(--border-radius-lg);
   }
 }
 

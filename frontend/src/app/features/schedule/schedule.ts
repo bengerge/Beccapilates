@@ -29,12 +29,6 @@ export class ScheduleComponent implements OnInit {
   selectedSession: ClassSession | null = null;
   showSuccessModal = false;
 
-  difficultyMap: Record<string, string> = {
-    'beginner': 'Kezdő',
-    'intermediate': 'Középhaladó',
-    'advanced': 'Haladó'
-  };
-
   ngOnInit() {
     this.setWeekToCurrent();
     this.realWeekStart = new Date(this.currentWeekStart.getTime());
@@ -49,10 +43,6 @@ export class ScheduleComponent implements OnInit {
     this.classService.getClasses().subscribe({
       next: (data) => this.classes = data
     });
-  }
-
-  getDifficultyLabel(level: string): string {
-    return this.difficultyMap[level] || level;
   }
 
   setWeekToCurrent() {

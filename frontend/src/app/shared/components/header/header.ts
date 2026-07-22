@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
 import { UiService } from '../../../core/services/ui';
+import { ToastService } from '../../../core/services/toast';
 
 @Component({
   selector: 'app-header',
@@ -14,6 +15,7 @@ import { UiService } from '../../../core/services/ui';
 export class HeaderComponent {
   private authService = inject(AuthService);
   private uiService = inject(UiService);
+  private toastService = inject(ToastService);
 
   isMobileMenuOpen = false;
 
@@ -33,6 +35,7 @@ export class HeaderComponent {
 
   logout() {
     this.authService.logout();
+    this.toastService.show('Sikeresen kijelentkeztél!', 'success');
     this.closeMobileMenu();
   }
 }

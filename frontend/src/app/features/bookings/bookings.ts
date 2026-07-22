@@ -26,12 +26,6 @@ export class BookingsComponent implements OnInit {
   confirmingSwapId: number | null = null;
   confirmingCancelId: number | null = null;
 
-  difficultyMap: Record<string, string> = {
-    'beginner': 'Kezdő',
-    'intermediate': 'Középhaladó',
-    'advanced': 'Haladó'
-  };
-
   ngOnInit() {
     this.loadMyBookings();
   }
@@ -112,9 +106,5 @@ export class BookingsComponent implements OnInit {
         this.confirmingSwapId = null;
       }
     });
-  }
-
-  getDifficultyLabel(level: string): string {
-    return this.difficultyMap[level] || level;
   }
 }

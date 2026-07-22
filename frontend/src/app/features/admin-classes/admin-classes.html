@@ -17,13 +17,20 @@
           <div class="form-group">
             <label>Nehézségi szint</label>
             <select formControlName="difficulty">
-              <option value="beginner">Kezdő</option>
-              <option value="advanced">Haladó</option>
+              <option value="" disabled selected>Válassz...</option>
+              @for (diff of difficulties; track diff.id) {
+                <option [value]="diff.name">{{ diff.name }}</option>
+              }
             </select>
           </div>
           <div class="form-group">
             <label>Helyszín</label>
-            <input type="text" formControlName="location" placeholder="Pl. A terem">
+            <select formControlName="location">
+              <option value="" disabled selected>Válassz...</option>
+              @for (loc of locations; track loc.id) {
+                <option [value]="loc.name">{{ loc.name }}</option>
+              }
+            </select>
           </div>
         </div>
 
@@ -52,15 +59,54 @@
       </form>
     </div>
 
+    <!-- Új szekció a listák kezeléséhez -->
+    <div class="dictionary-section">
+      <div class="card dict-card">
+        <h3>Helyszínek kezelése</h3>
+        <form [formGroup]="locationForm" (ngSubmit)="addLocation()" class="dict-form">
+          <input type="text" formControlName="name" placeholder="Új helyszín neve">
+          <button type="submit" [disabled]="locationForm.invalid" class="btn-secondary">Hozzáadás</button>
+        </form>
+        <ul class="dict-list">
+          @for (loc of locations; track loc.id) {
+            <li>
+              <span>{{ loc.name }}</span>
+              <button (click)="deleteLocation(loc.id)" class="btn-delete" title="Törlés">&times;</button>
+            </li>
+          } @empty {
+            <li class="empty">Nincs rögzített helyszín.</li>
+          }
+        </ul>
+      </div>
+
+      <div class="card dict-card">
+        <h3>Nehézségi szintek</h3>
+        <form [formGroup]="difficultyForm" (ngSubmit)="addDifficulty()" class="dict-form">
+          <input type="text" formControlName="name" placeholder="Új szint neve">
+          <button type="submit" [disabled]="difficultyForm.invalid" class="btn-secondary">Hozzáadás</button>
+        </form>
+        <ul class="dict-list">
+          @for (diff of difficulties; track diff.id) {
+            <li>
+              <span>{{ diff.name }}</span>
+              <button (click)="deleteDifficulty(diff.id)" class="btn-delete" title="Törlés">&times;</button>
+            </li>
+          } @empty {
+            <li class="empty">Nincs rögzített nehézségi szint.</li>
+          }
+        </ul>
+      </div>
+    </div>
+
     <div class="card list-section">
-      <h2>Aktuális órarend áttekintő</h2>
+      <h2>Aktuális (jövőbeli) órarend áttekintő</h2>
       <div class="class-list">
         @for (item of classes; track item.id) {
           <div class="mini-card">
             <div class="mini-time">{{ item.start_time | date:'MM.dd. HH:mm' }} - {{ item.end_time | date:'HH:mm' }}</div>
             <div class="mini-name">{{ item.name }}</div>
             <div class="mini-meta">
-              <span class="badge">{{ getDifficultyLabel(item.difficulty) }}</span>
+              <span class="badge">{{ item.difficulty }}</span>
               <span class="loc">{{ item.location }}</span>
             </div>
             <div class="mini-capacity" [class.full]="item.current_bookings >= item.max_capacity">

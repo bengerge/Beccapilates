@@ -195,6 +195,86 @@
   grid-column: 1 / -1;
 }
 
+.dictionary-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xl);
+}
+
+.dict-card {
+  h3 {
+    margin-top: 0;
+    margin-bottom: var(--spacing-md);
+    color: var(--primary-dark);
+    font-size: 1.2rem;
+  }
+}
+
+.dict-form {
+  display: flex;
+  gap: 10px;
+  margin-bottom: var(--spacing-md);
+  
+  input {
+    flex: 1;
+    padding: 8px 12px;
+    border: 1px solid #ddd;
+    border-radius: var(--border-radius-sm);
+  }
+
+  .btn-secondary {
+    background-color: var(--secondary-color);
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: var(--border-radius-sm);
+    cursor: pointer;
+    font-weight: bold;
+    
+    &:disabled {
+      background-color: #ccc;
+      cursor: not-allowed;
+    }
+  }
+}
+
+.dict-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  
+  li {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+    
+    &:last-child {
+      border-bottom: none;
+    }
+
+    &.empty {
+      color: #999;
+      font-style: italic;
+      justify-content: center;
+    }
+  }
+
+  .btn-delete {
+    background: none;
+    border: none;
+    color: var(--error-color, #dc3545);
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0 5px;
+    
+    &:hover {
+      color: darkred;
+    }
+  }
+}
+
 @media (max-width: 1200px) {
   .admin-grid {
     grid-template-columns: 1fr;

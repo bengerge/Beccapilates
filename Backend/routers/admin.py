@@ -3,6 +3,7 @@ from sqlalchemy.orm import Session
 from typing import List, Dict, Any
 from pydantic import BaseModel
 from schemas import ExternalBookingCreate
+from datetime import datetime
 
 import models
 import schemas
@@ -24,7 +25,8 @@ def verify_admin(current_user: models.User = Depends(get_current_user)):
 
 @router.get("/classes")
 def get_all_classes(db: Session = Depends(get_db), admin_user: models.User = Depends(verify_admin)):
-    classes = db.query(models.ClassSession).all()
+    now = datetime.utcnow()
+    classes = db.query(models.ClassSession).filter(models.ClassSession.start_time > now).all()
     result = []
     for c in classes:
         current_bookings = db.query(models.Booking).filter(models.Booking.class_session_id == c.id).count()
@@ -155,3 +157,51 @@ def create_external_booking(
     db.refresh(new_booking)
     
     return {"message": "Külsős vendég rögzítve.", "booking_id": new_booking.id}
+
+@router.get("/locations", response_model=List[schemas.LocationResponse])
+def get_locations(db: Session = Depends(get_db)):
+    return db.query(models.Location).all()
+
+@router.post("/locations", response_model=schemas.LocationResponse, status_code=status.HTTP_201_CREATED)
+def create_location(location_data: schemas.LocationCreate, db: Session = Depends(get_db), admin_user: models.User = Depends(verify_admin)):
+    existing = db.query(models.Location).filter(models.Location.name == location_data.name).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Ez a helyszín már létezik.")
+    new_location = models.Location(name=location_data.name)
+    db.add(new_location)
+    db.commit()
+    db.refresh(new_location)
+    return new_location
+
+@router.delete("/locations/{location_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_location(location_id: int, db: Session = Depends(get_db), admin_user: models.User = Depends(verify_admin)):
+    location = db.query(models.Location).filter(models.Location.id == location_id).first()
+    if not location:
+        raise HTTPException(status_code=404, detail="A helyszín nem található.")
+    db.delete(location)
+    db.commit()
+    return None
+
+@router.get("/difficulties", response_model=List[schemas.DifficultyLevelResponse])
+def get_difficulties(db: Session = Depends(get_db)):
+    return db.query(models.DifficultyLevel).all()
+
+@router.post("/difficulties", response_model=schemas.DifficultyLevelResponse, status_code=status.HTTP_201_CREATED)
+def create_difficulty(difficulty_data: schemas.DifficultyLevelCreate, db: Session = Depends(get_db), admin_user: models.User = Depends(verify_admin)):
+    existing = db.query(models.DifficultyLevel).filter(models.DifficultyLevel.name == difficulty_data.name).first()
+    if existing:
+        raise HTTPException(status_code=400, detail="Ez a nehézségi szint már létezik.")
+    new_difficulty = models.DifficultyLevel(name=difficulty_data.name)
+    db.add(new_difficulty)
+    db.commit()
+    db.refresh(new_difficulty)
+    return new_difficulty
+
+@router.delete("/difficulties/{difficulty_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_difficulty(difficulty_id: int, db: Session = Depends(get_db), admin_user: models.User = Depends(verify_admin)):
+    difficulty = db.query(models.DifficultyLevel).filter(models.DifficultyLevel.id == difficulty_id).first()
+    if not difficulty:
+        raise HTTPException(status_code=404, detail="A nehézségi szint nem található.")
+    db.delete(difficulty)
+    db.commit()
+    return None

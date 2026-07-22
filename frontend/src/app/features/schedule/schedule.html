@@ -32,7 +32,7 @@
               <div class="time">{{ session.start_time | date:'HH:mm' }} - {{ session.end_time | date:'HH:mm' }}</div>
               <div class="name">{{ session.name }}</div>
               <div class="meta">
-                <span class="difficulty">{{ getDifficultyLabel(session.difficulty) }}</span>
+                <span class="difficulty">{{ session.difficulty }}</span>
               </div>
               <div class="capacity">
                 Szabad: {{ session.max_capacity - session.current_bookings }} hely
@@ -58,7 +58,7 @@
       <div class="modal-body">
         <p class="modal-time">⏰ <strong>Időpont:</strong> {{ selectedSession.start_time | date:'yyyy. MMMM d. HH:mm' }}</p>
         <p class="modal-detail">📍 <strong>Helyszín:</strong> {{ selectedSession.location }}</p>
-        <p class="modal-detail">📊 <strong>Szint:</strong> {{ getDifficultyLabel(selectedSession.difficulty) }}</p>
+        <p class="modal-detail">📊 <strong>Szint:</strong> {{ selectedSession.difficulty }}</p>
         
         @if (selectedSession.description) {
           <div class="info-box desc-box">
@@ -69,7 +69,7 @@
 
         <div class="info-box bring-box">
           <strong>🎒 Mit hozz magaddal?</strong>
-          <p>Kényelmes sportruházatot, egy tiszta törölközőt és egy üveg szénsavmentes vizet. A matracokat mi biztosítjuk!</p>
+          <p>Kényelmes sportruházatot, egy tiszta törölközőt és egy üveg szénsavmentes vizet. Ha van matracod érdemes magaddal hoznod, de ha nincs tudom biztosítani.</p>
         </div>
       </div>
       
@@ -94,7 +94,7 @@
       </div>
       
       <div class="modal-body">
-        <p class="success-text">Várunk szeretettel a Pilates órára!</p>
+        <p class="success-text">Várlak szeretettel a Pilates órára!</p>
         
         <div class="info-box payment-box">
           <strong>💳 Fizetési információk</strong>

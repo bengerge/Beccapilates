@@ -19,23 +19,23 @@ export class AdminClassesComponent implements OnInit {
   private toastService = inject(ToastService);
 
   classes: ClassSession[] = [];
-  classForm!: FormGroup;
+  locations: any[] = [];
+  difficulties: any[] = [];
 
-  difficultyMap: Record<string, string> = {
-    'beginner': 'Kezdő',
-    'intermediate': 'Középhaladó',
-    'advanced': 'Haladó'
-  };
+  classForm!: FormGroup;
+  locationForm!: FormGroup;
+  difficultyForm!: FormGroup;
   
   ngOnInit() {
     this.initForm();
     this.loadClasses();
+    this.loadDictionaries();
   }
 
   initForm() {
     this.classForm = this.fb.group({
       name: ['', Validators.required],
-      difficulty: ['beginner', Validators.required],
+      difficulty: ['', Validators.required],
       start_time: ['', Validators.required],
       end_time: ['', Validators.required],
       location: ['', Validators.required],
@@ -43,19 +43,33 @@ export class AdminClassesComponent implements OnInit {
       description: ['']
     });
 
-    // ÚJ: Automatikus +1 óra kalkuláció a befejezéshez
+    this.locationForm = this.fb.group({
+      name: ['', Validators.required]
+    });
+
+    this.difficultyForm = this.fb.group({
+      name: ['', Validators.required]
+    });
+
     this.classForm.get('start_time')?.valueChanges.subscribe(startTime => {
       if (startTime) {
         const startDate = new Date(startTime);
-        startDate.setHours(startDate.getHours() + 1); // +1 óra hozzáadása
-        
-        // Helyi időzónához igazított formátum (YYYY-MM-DDTHH:mm), amit a datetime-local input elfogad
+        startDate.setHours(startDate.getHours() + 1);
         const tzOffset = startDate.getTimezoneOffset() * 60000;
         const localISOTime = new Date(startDate.getTime() - tzOffset).toISOString().slice(0, 16);
-        
-        // Csendben (emitEvent: false) frissítjük a vége mezőt, hogy ne okozzunk végtelen ciklust
         this.classForm.patchValue({ end_time: localISOTime }, { emitEvent: false });
       }
+    });
+  }
+
+  loadDictionaries() {
+    this.adminService.getLocations().subscribe({
+      next: (data) => this.locations = data,
+      error: () => this.toastService.show('Nem sikerült betölteni a helyszíneket.', 'error')
+    });
+    this.adminService.getDifficulties().subscribe({
+      next: (data) => this.difficulties = data,
+      error: () => this.toastService.show('Nem sikerült betölteni a nehézségi szinteket.', 'error')
     });
   }
 
@@ -67,6 +81,50 @@ export class AdminClassesComponent implements OnInit {
         );
       },
       error: () => this.toastService.show('Nem sikerült betölteni a meglévő órákat.', 'error')
+    });
+  }
+
+  addLocation() {
+    if (this.locationForm.invalid) return;
+    this.adminService.createLocation(this.locationForm.value.name).subscribe({
+      next: () => {
+        this.toastService.show('Helyszín hozzáadva!', 'success');
+        this.locationForm.reset();
+        this.loadDictionaries();
+      },
+      error: () => this.toastService.show('Hiba a helyszín hozzáadásakor', 'error')
+    });
+  }
+
+  deleteLocation(id: number) {
+    this.adminService.deleteLocation(id).subscribe({
+      next: () => {
+        this.toastService.show('Helyszín törölve!', 'success');
+        this.loadDictionaries();
+      },
+      error: () => this.toastService.show('Hiba a törléskor', 'error')
+    });
+  }
+
+  addDifficulty() {
+    if (this.difficultyForm.invalid) return;
+    this.adminService.createDifficulty(this.difficultyForm.value.name).subscribe({
+      next: () => {
+        this.toastService.show('Nehézségi szint hozzáadva!', 'success');
+        this.difficultyForm.reset();
+        this.loadDictionaries();
+      },
+      error: () => this.toastService.show('Hiba a szint hozzáadásakor', 'error')
+    });
+  }
+
+  deleteDifficulty(id: number) {
+    this.adminService.deleteDifficulty(id).subscribe({
+      next: () => {
+        this.toastService.show('Nehézségi szint törölve!', 'success');
+        this.loadDictionaries();
+      },
+      error: () => this.toastService.show('Hiba a törléskor', 'error')
     });
   }
 
@@ -82,8 +140,9 @@ export class AdminClassesComponent implements OnInit {
       next: () => {
         this.toastService.show('Új óra sikeresen meghirdetve!', 'success');
         this.classForm.reset({ 
-          max_capacity: 10, 
-          difficulty: 'beginner' 
+          max_capacity: 10,
+          difficulty: '',
+          location: ''
         });
         this.loadClasses();
       },
@@ -92,9 +151,5 @@ export class AdminClassesComponent implements OnInit {
         this.toastService.show(`Hiba történt: ${errorMsg}`, 'error');
       }
     });
-  }
-
-  getDifficultyLabel(level: string): string {
-    return this.difficultyMap[level] || level;
   }
 }

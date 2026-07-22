@@ -1,13 +1,15 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, FormGroup, Validators, ValidationErrors, AbstractControl } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth';
 import { UiService } from '../../../core/services/ui';
+import { ToastService } from '../../../core/services/toast';
 
 @Component({
   selector: 'app-auth-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
+  imports: [CommonModule, ReactiveFormsModule, RouterModule],
   templateUrl: './auth-modal.html',
   styleUrls: ['./auth-modal.scss']
 })
@@ -16,6 +18,7 @@ export class AuthModalComponent implements OnInit {
   errorMessage: string | null = null;
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private toastService = inject(ToastService);
   uiService = inject(UiService);
 
   isLoginMode = true;
@@ -39,7 +42,8 @@ export class AuthModalComponent implements OnInit {
         email: ['', [Validators.required, Validators.email]],
         phone: [''],
         password: ['', [Validators.required, Validators.minLength(6)]],
-        passwordConfirm: ['', [Validators.required]]
+        passwordConfirm: ['', [Validators.required]],
+        acceptTerms: [false, Validators.requiredTrue]
       }, {validators: this.passwordMatchValidator});
     }
   }
@@ -75,7 +79,10 @@ export class AuthModalComponent implements OnInit {
 
     if (this.isLoginMode) {
       this.authService.login(this.authForm.value).subscribe({
-        next: () => this.closeModal(),
+        next: () => {
+          this.toastService.show('Sikeresen bejelentkeztél!', 'success');
+          this.closeModal();
+        },
         error: () => this.errorMessage = 'Helytelen email vagy jelszó!'
       });
     } else {

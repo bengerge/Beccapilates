@@ -1,7 +1,7 @@
 from pydantic import BaseModel, EmailStr, ConfigDict
 from datetime import datetime
 from typing import Optional, List
-from models import RoleEnum, DifficultyEnum
+from models import RoleEnum
     
 class Token(BaseModel):
     access_token: str
@@ -26,9 +26,31 @@ class UserResponse(UserBase):
 
     model_config = ConfigDict(from_attributes=True)
 
+class LocationBase(BaseModel):
+    name: str
+
+class LocationCreate(LocationBase):
+    pass
+
+class LocationResponse(LocationBase):
+    id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
+class DifficultyLevelBase(BaseModel):
+    name: str
+
+class DifficultyLevelCreate(DifficultyLevelBase):
+    pass
+
+class DifficultyLevelResponse(DifficultyLevelBase):
+    id: int
+    created_at: datetime
+    model_config = ConfigDict(from_attributes=True)
+
 class ClassSessionBase(BaseModel):
     name: str
-    difficulty: DifficultyEnum
+    difficulty: str
     start_time: datetime
     end_time: datetime
     max_capacity: int

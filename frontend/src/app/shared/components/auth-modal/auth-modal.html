@@ -53,6 +53,15 @@
             <small class="error-text">A két jelszó nem egyezik meg!</small>
           }
         </div>
+        
+        <div class="form-group terms-group">
+          <label class="checkbox-container">
+            <input type="checkbox" formControlName="acceptTerms">
+            <span>
+              Elfogadom az <a routerLink="/aszf" target="_blank" (click)="$event.stopPropagation(); closeModal()">Általános Szerződési Feltételeket</a> és az <a routerLink="/adatvedelem" target="_blank" (click)="$event.stopPropagation(); closeModal()">Adatvédelmi tájékoztatót</a>.
+            </span>
+          </label>
+        </div>
       }
 
       @if (errorMessage) {

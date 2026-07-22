@@ -11,6 +11,38 @@
   p { color: #666; }
 }
 
+.empty-state {
+  text-align: center;
+  padding: 40px 20px;
+  background: white;
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid #e2e8f0;
+  
+  p {
+    font-size: 1.1rem;
+    color: #64748b;
+    margin-bottom: 20px;
+  }
+
+  .btn-primary {
+    display: inline-block;
+    padding: 12px 24px;
+    background-color: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: var(--border-radius-md);
+    font-weight: bold;
+    transition: all 0.3s;
+
+    &:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+  }
+}
+
 .bookings-list, .swap-list {
   display: flex;
   flex-direction: column;

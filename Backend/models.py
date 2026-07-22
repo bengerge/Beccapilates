@@ -26,12 +26,26 @@ class User(Base):
 
     bookings = relationship("Booking", back_populates="user", cascade="all, delete-orphan")
 
+class DifficultyLevel(Base):
+    __tablename__ = "difficulty_levels"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(100), nullable=False, unique=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
+class Location(Base):
+    __tablename__ = "locations"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(200), nullable=False, unique=True)
+    created_at = Column(DateTime, default=datetime.utcnow)
+
 class ClassSession(Base):
     __tablename__ = "class_sessions"
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(100), nullable=False)
-    difficulty = Column(Enum(DifficultyEnum), nullable=False)
+    difficulty = Column(String(100), nullable=False)
     start_time = Column(DateTime, nullable=False, index=True)
     end_time = Column(DateTime, nullable=False)
     max_capacity = Column(Integer, nullable=False)

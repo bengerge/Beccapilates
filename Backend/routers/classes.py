@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
 from typing import List
+from datetime import datetime
 import models
 from database import get_db
 
@@ -8,7 +9,8 @@ router = APIRouter(prefix="/classes", tags=["Public Classes"])
 
 @router.get("")
 def get_public_classes(db: Session = Depends(get_db)):
-    classes = db.query(models.ClassSession).all()
+    now = datetime.utcnow()
+    classes = db.query(models.ClassSession).filter(models.ClassSession.start_time > now).all()
     result = []
     for c in classes:
         current_bookings = db.query(models.Booking).filter(models.Booking.class_session_id == c.id).count()
