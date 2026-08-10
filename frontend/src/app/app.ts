@@ -7,11 +7,12 @@ import { AuthModalComponent } from './shared/components/auth-modal/auth-modal';
 import { FooterComponent } from './shared/components/footer/footer';
 import { ToastComponent } from './shared/components/toast/toast';
 import { AuthService } from './core/services/auth';
+import { CookieBannerComponent } from './shared/components/cookie-banner/cookie-banner';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, HeaderComponent, CommonModule, AuthModalComponent, FooterComponent, ToastComponent],
+  imports: [RouterOutlet, HeaderComponent, CommonModule, AuthModalComponent, FooterComponent, ToastComponent, CookieBannerComponent],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })

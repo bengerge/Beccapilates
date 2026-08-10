@@ -33,9 +33,12 @@ export class BookingsComponent implements OnInit {
   loadMyBookings() {
     this.bookingService.getMyBookings().subscribe({
       next: (data) => {
-        this.myBookings = data.sort((a: any, b: any) => 
-          new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
-        );
+        const now = new Date().getTime();
+        this.myBookings = data
+          .filter((a: any) => new Date(a.start_time).getTime() >= now)
+          .sort((a: any, b: any) => 
+            new Date(a.start_time).getTime() - new Date(b.start_time).getTime()
+          );
       },
       error: () => this.toastService.show('Nem sikerült betölteni a foglalásaidat.', 'error')
     });

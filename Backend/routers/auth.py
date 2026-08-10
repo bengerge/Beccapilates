@@ -48,7 +48,7 @@ def login(response: Response, form_data: OAuth2PasswordRequestForm = Depends(), 
         key="access_token",
         value=f"Bearer {access_token}",
         httponly=True,
-        secure=False, # Lokális gépen False, éles szerveren (HTTPS) True kell legyen!
+        secure=False,
         samesite="lax",
         max_age=1800
     )

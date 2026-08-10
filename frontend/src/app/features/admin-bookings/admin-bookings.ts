@@ -17,6 +17,9 @@ export class AdminBookingsComponent implements OnInit {
   private toastService = inject(ToastService);
 
   classes: any[] = [];
+  locations: any[] = [];
+  difficulties: any[] = [];
+  
   currentWeekStart: Date = new Date();
   realWeekStart: Date = new Date();
   weekDays: Date[] = [];
@@ -31,14 +34,10 @@ export class AdminBookingsComponent implements OnInit {
   
   editForm!: FormGroup;
 
-  difficultyMap: Record<string, string> = {
-    'beginner': 'Kezdő',
-    'advanced': 'Haladó'
-  };
-
   ngOnInit() {
     this.setWeekToCurrent();
     this.realWeekStart = new Date(this.currentWeekStart);
+    this.loadDictionaries();
     this.loadClasses();
     this.initForm();
   }
@@ -61,6 +60,17 @@ export class AdminBookingsComponent implements OnInit {
         const localISOTime = new Date(startDate.getTime() - tzOffset).toISOString().slice(0, 16);
         this.editForm.patchValue({ end_time: localISOTime }, { emitEvent: false });
       }
+    });
+  }
+
+  loadDictionaries() {
+    this.adminService.getLocations().subscribe({
+      next: (data) => this.locations = data,
+      error: () => this.toastService.show('Nem sikerült betölteni a helyszíneket.', 'error')
+    });
+    this.adminService.getDifficulties().subscribe({
+      next: (data) => this.difficulties = data,
+      error: () => this.toastService.show('Nem sikerült betölteni a nehézségi szinteket.', 'error')
     });
   }
 
@@ -216,9 +226,5 @@ export class AdminBookingsComponent implements OnInit {
       },
       error: () => this.toastService.show('Hiba a vendég eltávolításakor.', 'error')
     });
-  }
-
-  getDifficulty(level: string): string { 
-    return this.difficultyMap[level] || level; 
   }
 }

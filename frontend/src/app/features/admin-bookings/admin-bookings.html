@@ -24,7 +24,7 @@
               <div class="time">{{ session.start_time | date:'HH:mm' }} - {{ session.end_time | date:'HH:mm' }}</div>
               <div class="name">{{ session.name }}</div>
               <div class="meta">
-                <span class="difficulty">{{ getDifficulty(session.difficulty) }}</span>
+                <span class="difficulty">{{ session.difficulty }}</span>
               </div>
               <div class="capacity" [class.text-danger]="session.current_bookings >= session.max_capacity">
                 Létszám: {{ session.current_bookings }} / {{ session.max_capacity }}
@@ -51,7 +51,7 @@
         @if (!isEditing) {
           <p class="modal-time">⏰ <strong>Időpont:</strong> {{ selectedClass.start_time | date:'yyyy. MMMM d. HH:mm' }} - {{ selectedClass.end_time | date:'HH:mm' }}</p>
           <p class="modal-detail">📍 <strong>Helyszín:</strong> {{ selectedClass.location }}</p>
-          <p class="modal-detail">📊 <strong>Szint:</strong> {{ getDifficulty(selectedClass.difficulty) }}</p>
+          <p class="modal-detail">📊 <strong>Szint:</strong> {{ selectedClass.difficulty }}</p>
           
           <div class="info-box attendees-box">
             <div class="attendees-header-flex">
@@ -125,8 +125,10 @@
               <div class="form-group">
                 <label>Szint</label>
                 <select formControlName="difficulty">
-                  <option value="beginner">Kezdő</option>
-                  <option value="advanced">Haladó</option>
+                  <option value="" disabled selected>Válassz...</option>
+                  @for (diff of difficulties; track diff.id) {
+                    <option [value]="diff.name">{{ diff.name }}</option>
+                  }
                 </select>
               </div>
               <div class="form-group">
@@ -137,7 +139,12 @@
             
             <div class="form-group">
               <label>Helyszín</label>
-              <input type="text" formControlName="location">
+              <select formControlName="location">
+                <option value="" disabled selected>Válassz...</option>
+                @for (loc of locations; track loc.id) {
+                  <option [value]="loc.name">{{ loc.name }}</option>
+                }
+              </select>
             </div>
           </form>
         }
