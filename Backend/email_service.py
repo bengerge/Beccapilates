@@ -1,28 +1,24 @@
-import smtplib
+import urllib.request
+import json
 import os
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 from dotenv import load_dotenv
 
 load_dotenv()
 
-SMTP_EMAIL = os.getenv("SMTP_EMAIL", "")
-SMTP_PASSWORD = os.getenv("SMTP_PASSWORD", "")
-SMTP_SERVER = "smtp.gmail.com"
-SMTP_PORT = 587
-
 def send_reset_password_email(to_email: str, reset_link: str):
-    if not SMTP_EMAIL or not SMTP_PASSWORD:
-        print("Warning: SMTP credentials are not set in environment.")
+    api_key = os.getenv("RESEND_API_KEY", "")
+    
+    if not api_key:
+        print("Warning: RESEND_API_KEY is not set in environment.")
         print(f"Would have sent reset link: {reset_link} to {to_email}")
         return
 
-    msg = MIMEMultipart()
-    msg['From'] = SMTP_EMAIL
-    msg['To'] = to_email
-    msg['Subject'] = "BeccaPilates - Jelszó visszaállítása"
+    url = "https://api.resend.com/emails"
+    
+    # A Resend alapértelmezett teszt címe, ha a domain nincs hitelesítve
+    sender = "Acme <onboarding@resend.dev>"
 
-    body = f"""\
+    html_content = f"""
     <html>
       <body style="font-family: Arial, sans-serif; color: #333;">
         <h2>Kedves Felhasználó!</h2>
@@ -36,15 +32,32 @@ def send_reset_password_email(to_email: str, reset_link: str):
       </body>
     </html>
     """
-    
-    msg.attach(MIMEText(body, 'html'))
+
+    data = {
+        "from": sender,
+        "to": [to_email],
+        "subject": "BeccaPilates - Jelszó visszaállítása",
+        "html": html_content
+    }
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json"
+    }
+
+    req = urllib.request.Request(
+        url, 
+        data=json.dumps(data).encode("utf-8"), 
+        headers=headers, 
+        method="POST"
+    )
 
     try:
-        server = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
-        server.starttls()
-        server.login(SMTP_EMAIL, SMTP_PASSWORD)
-        server.send_message(msg)
-        server.quit()
-        print(f"Reset email successfully sent to {to_email}")
+        with urllib.request.urlopen(req) as response:
+            result = response.read().decode("utf-8")
+            print(f"Reset email successfully sent via Resend API to {to_email}: {result}")
+    except urllib.error.HTTPError as e:
+        error_msg = e.read().decode("utf-8")
+        print(f"Failed to send email to {to_email} (HTTP Error {e.code}): {error_msg}")
     except Exception as e:
         print(f"Failed to send email to {to_email}: {e}")
