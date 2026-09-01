@@ -127,6 +127,19 @@ def update_user_role(user_id: int, role_data: RoleUpdate, db: Session = Depends(
     db.commit()
     return {"detail": "Jogosultság sikeresen módosítva."}
 
+@router.delete("/users/{user_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_user(user_id: int, db: Session = Depends(get_db), admin_user: models.User = Depends(verify_admin)):
+    user_to_delete = db.query(models.User).filter(models.User.id == user_id).first()
+    if not user_to_delete:
+        raise HTTPException(status_code=404, detail="Felhasználó nem található.")
+        
+    if user_to_delete.id == admin_user.id:
+        raise HTTPException(status_code=400, detail="Nem törölheted saját magadat ezen a felületen.")
+        
+    db.delete(user_to_delete)
+    db.commit()
+    return None
+
 @router.post("/external")
 def create_external_booking(
     booking_data: ExternalBookingCreate, 

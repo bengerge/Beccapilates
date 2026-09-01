@@ -13,6 +13,7 @@
             <th>Email cím</th>
             <th>Telefonszám</th>
             <th>Jogosultság</th>
+            <th>Műveletek</th>
           </tr>
         </thead>
         <tbody>
@@ -34,6 +35,15 @@
                   <span class="self-badge">(Te)</span>
                 }
               </td>
+              <td>
+                <button 
+                  class="btn-delete" 
+                  [disabled]="user.id === currentUserId"
+                  [title]="user.id === currentUserId ? 'Magadat nem törölheted' : 'Felhasználó törlése'"
+                  (click)="openDeleteModal(user)">
+                  &times; Törlés
+                </button>
+              </td>
             </tr>
           }
         </tbody>
@@ -50,6 +60,20 @@
         <div class="modal-actions">
           <button class="btn-secondary" (click)="closeModal()">Mégsem</button>
           <button class="btn-primary" (click)="confirmRoleChange()">Igen, módosítom</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  @if (isDeleteModalOpen && userToDelete) {
+    <div class="modal-backdrop" (click)="closeDeleteModal()">
+      <div class="modal-card" (click)="$event.stopPropagation()">
+        <div class="modal-icon danger">🗑️</div>
+        <h3>Biztosan törlöd a felhasználót?</h3>
+        <p>Ezzel véglegesen törlöd <strong>{{ userToDelete.name || userToDelete.email }}</strong> fiókját. A művelet nem vonható vissza!</p>
+        <div class="modal-actions">
+          <button class="btn-secondary" (click)="closeDeleteModal()">Mégsem</button>
+          <button class="btn-danger" (click)="confirmDeleteUser()">Igen, törlöm</button>
         </div>
       </div>
     </div>

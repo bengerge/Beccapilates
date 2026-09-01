@@ -18,6 +18,10 @@ export class AdminService {
     return this.http.put(`${this.ADMIN_API_URL}/users/${userId}/role`, { role });
   }
 
+  deleteUser(userId: number): Observable<any> {
+    return this.http.delete(`${this.ADMIN_API_URL}/users/${userId}`, { responseType: 'text' });
+  }
+
   getAllBookings(): Observable<any[]> {
     return this.http.get<any[]>(`${this.ADMIN_API_URL}/bookings`);
   }

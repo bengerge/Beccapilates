@@ -91,3 +91,54 @@ def delete_profile(db: Session = Depends(get_db), current_user: models.User = De
     db.delete(current_user)
     db.commit()
     return {"detail": "Fiók sikeresen törölve."}
+
+from pydantic import BaseModel
+
+class ForgotPasswordRequest(BaseModel):
+    email: str
+
+class ResetPasswordRequest(BaseModel):
+    token: str
+    new_password: str
+
+@router.post("/forgot-password")
+def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.email == req.email).first()
+    if not user:
+        # Don't reveal if user exists
+        return {"detail": "Ha létezik ez az e-mail cím, elküldtük rá a visszaállító linket."}
+
+    import secrets
+    from datetime import datetime, timedelta
+    from email_service import send_reset_password_email
+    
+    token = secrets.token_urlsafe(32)
+    user.reset_token = token
+    user.reset_token_expires = datetime.utcnow() + timedelta(minutes=15)
+    db.commit()
+    
+    reset_link = f"http://localhost:4200/reset-password?token={token}"
+    send_reset_password_email(user.email, reset_link)
+    
+    return {"detail": "Ha létezik ez az e-mail cím, elküldtük rá a visszaállító linket."}
+
+@router.post("/reset-password")
+def reset_password(req: ResetPasswordRequest, db: Session = Depends(get_db)):
+    from datetime import datetime
+    from passlib.context import CryptContext
+    
+    user = db.query(models.User).filter(
+        models.User.reset_token == req.token,
+        models.User.reset_token_expires > datetime.utcnow()
+    ).first()
+    
+    if not user:
+        raise HTTPException(status_code=400, detail="Érvénytelen vagy lejárt jelszóvisszaállító link.")
+        
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    user.hashed_password = pwd_context.hash(req.new_password)
+    user.reset_token = None
+    user.reset_token_expires = None
+    db.commit()
+    
+    return {"detail": "Jelszó sikeresen megváltoztatva."}

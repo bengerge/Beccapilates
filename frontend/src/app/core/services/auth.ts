@@ -83,4 +83,12 @@ export class AuthService {
   deleteAccount() {
     return this.http.delete(`${this.API_URL}/me`, { withCredentials: true });
   }
+
+  forgotPassword(email: string) {
+    return this.http.post(`${this.API_URL}/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, new_password: string) {
+    return this.http.post(`${this.API_URL}/reset-password`, { token, new_password });
+  }
 }

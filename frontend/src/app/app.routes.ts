@@ -53,6 +53,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/bookings/bookings').then(m => m.BookingsComponent)
   },
   {
+    path: 'forgot-password',
+    loadComponent: () => import('./features/forgot-password/forgot-password').then(m => m.ForgotPasswordComponent)
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () => import('./features/reset-password/reset-password').then(m => m.ResetPasswordComponent)
+  },
+  {
     path: '**',
     redirectTo: ''
   }

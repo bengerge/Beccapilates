@@ -78,6 +78,21 @@
       box-shadow: 0 0 0 2px rgba(232, 180, 184, 0.2);
     }
   }
+
+  .forgot-password-link {
+    text-align: right;
+    margin-top: 8px;
+    
+    a {
+      font-size: 0.85rem;
+      color: var(--primary-dark);
+      text-decoration: none;
+      
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
 }
 
 .error-message {

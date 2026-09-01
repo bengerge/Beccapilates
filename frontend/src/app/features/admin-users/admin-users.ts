@@ -72,4 +72,32 @@ export class AdminUsersComponent implements OnInit {
       });
     }
   }
+
+  isDeleteModalOpen = false;
+  userToDelete: any = null;
+
+  openDeleteModal(user: any) {
+    this.userToDelete = user;
+    this.isDeleteModalOpen = true;
+  }
+
+  closeDeleteModal() {
+    this.isDeleteModalOpen = false;
+    this.userToDelete = null;
+  }
+
+  confirmDeleteUser() {
+    if (!this.userToDelete) return;
+    this.adminService.deleteUser(this.userToDelete.id).subscribe({
+      next: () => {
+        this.toastService.show('Felhasználó sikeresen törölve!', 'success');
+        this.closeDeleteModal();
+        this.loadUsers();
+      },
+      error: () => {
+        this.toastService.show('Hiba a felhasználó törlésekor.', 'error');
+        this.closeDeleteModal();
+      }
+    });
+  }
 }

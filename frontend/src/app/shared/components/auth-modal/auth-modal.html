@@ -43,6 +43,11 @@
       <div class="form-group">
         <label for="password">Jelszó</label>
         <input id="password" type="password" formControlName="password" placeholder="******">
+        @if (isLoginMode) {
+          <div class="forgot-password-link">
+            <a routerLink="/forgot-password" (click)="closeModal()">Elfelejtetted a jelszavad?</a>
+          </div>
+        }
       </div>
       @if (!isLoginMode) {
       <div class="form-group">
