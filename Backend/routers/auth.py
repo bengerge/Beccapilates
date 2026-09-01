@@ -117,7 +117,7 @@ def forgot_password(req: ForgotPasswordRequest, db: Session = Depends(get_db)):
     user.reset_token_expires = datetime.utcnow() + timedelta(minutes=15)
     db.commit()
     
-    reset_link = f"http://localhost:4200/reset-password?token={token}"
+    reset_link = f"https://bekkapilates.hu/reset-password?token={token}"
     send_reset_password_email(user.email, reset_link)
     
     return {"detail": "Ha létezik ez az e-mail cím, elküldtük rá a visszaállító linket."}
