@@ -106,8 +106,7 @@
             <div class="mini-time">{{ item.start_time | date:'MM.dd. HH:mm' }} - {{ item.end_time | date:'HH:mm' }}</div>
             <div class="mini-name">{{ item.name }}</div>
             <div class="mini-meta">
-              <span class="badge">{{ item.difficulty }}</span>
-              <span class="loc">{{ item.location }}</span>
+              <span class="badge">{{ item.location }}</span>
             </div>
             <div class="mini-capacity" [class.full]="item.current_bookings >= item.max_capacity">
               Létszám: {{ item.current_bookings || 0 }} / {{ item.max_capacity }}

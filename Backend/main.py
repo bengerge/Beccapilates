@@ -7,11 +7,18 @@ from fastapi.middleware.cors import CORSMiddleware
 
 models.Base.metadata.create_all(bind=engine)
 
+import asyncio
+from scheduler import run_reminder_scheduler
+
 app = FastAPI(
     title="Becca Pilates API",
     description="API backend a Becca Pilates weboldalhoz",
     version="1.0.0"
 )
+
+@app.on_event("startup")
+async def startup_event():
+    asyncio.create_task(run_reminder_scheduler())
 
 app.add_middleware(
     CORSMiddleware,

@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Text
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Enum, Text, Boolean
 from sqlalchemy.orm import relationship
 from datetime import datetime
 import enum
@@ -53,6 +53,7 @@ class ClassSession(Base):
     max_capacity = Column(Integer, nullable=False)
     location = Column(String(200), nullable=False)
     description = Column(Text, nullable=True)
+    reminder_sent = Column(Boolean, default=False)
     created_at = Column(DateTime, default=datetime.utcnow)
 
     bookings = relationship("Booking", back_populates="class_session", cascade="all, delete-orphan")

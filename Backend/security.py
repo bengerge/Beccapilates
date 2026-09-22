@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
 import secrets
 from typing import Optional
+from pathlib import Path
 from jose import jwt
 import bcrypt
 from dotenv import load_dotenv
 from sqlalchemy.orm import Session
 import models
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 # Dinamikus kulcs generálása minden induláskor
 SECRET_KEY = secrets.token_urlsafe(32)

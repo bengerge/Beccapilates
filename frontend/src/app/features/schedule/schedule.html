@@ -32,7 +32,7 @@
               <div class="time">{{ session.start_time | date:'HH:mm' }} - {{ session.end_time | date:'HH:mm' }}</div>
               <div class="name">{{ session.name }}</div>
               <div class="meta">
-                <span class="difficulty">{{ session.difficulty }}</span>
+                <span class="difficulty">{{ session.location }}</span>
               </div>
               <div class="capacity">
                 Szabad: {{ session.max_capacity - session.current_bookings }} hely

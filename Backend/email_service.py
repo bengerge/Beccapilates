@@ -2,6 +2,7 @@ import urllib.request
 import json
 import os
 import socket
+from pathlib import Path
 from dotenv import load_dotenv
 
 # --- IPv6 kikényszerített letiltása (csak IPv4 használata) ---
@@ -12,7 +13,7 @@ def new_getaddrinfo(*args, **kwargs):
 socket.getaddrinfo = new_getaddrinfo
 # ---------------------------------------------------------------
 
-load_dotenv()
+load_dotenv(Path(__file__).resolve().parent.parent / ".env")
 
 def send_reset_password_email(to_email: str, reset_link: str):
     api_key = os.getenv("RESEND_API_KEY", "")
@@ -25,7 +26,7 @@ def send_reset_password_email(to_email: str, reset_link: str):
     url = "https://api.resend.com/emails"
     
     # A Resend alapértelmezett teszt címe, ha a domain nincs hitelesítve
-    sender = "Acme <onboarding@resend.dev>"
+    sender = "BekkaPilates <onboarding@resend.dev>"
 
     html_content = f"""
     <html>
@@ -71,3 +72,59 @@ def send_reset_password_email(to_email: str, reset_link: str):
         print(f"Failed to send email to {to_email} (HTTP Error {e.code}): {error_msg}")
     except Exception as e:
         print(f"Failed to send email to {to_email}: {e}")
+
+def send_reminder_email(to_email: str, class_name: str, start_time, location: str):
+    api_key = os.getenv("RESEND_API_KEY", "")
+    if not api_key:
+        print("Warning: RESEND_API_KEY is not set.")
+        return
+
+    url = "https://api.resend.com/emails"
+    sender = "BekkaPilates <onboarding@resend.dev>"
+    
+    # Format the time nicely
+    time_str = start_time.strftime("%Y. %m. %d. %H:%M")
+
+    html_content = f"""
+    <html>
+      <body style="font-family: Arial, sans-serif; color: #333;">
+        <h2>Kedves Vendégem!</h2>
+        <p>Szeretnélek emlékeztetni, hogy pontosan <b>24 óra múlva</b> kezdődik a lefoglalt Pilates órád!</p>
+        <div style="background-color: #f9f9f9; padding: 15px; border-radius: 5px; margin: 15px 0;">
+            <p><b>Óra típusa:</b> {class_name}</p>
+            <p><b>Kezdés:</b> {time_str}</p>
+            <p><b>Helyszín:</b> {location}</p>
+        </div>
+        <p>Szeretettel várlak a holnapi órámon , ha nem tudsz jönni kérlek jelezd felém!</p>
+        <br>
+        <p>Üdvözlettel,<br>Bekka</p>
+      </body>
+    </html>
+    """
+
+    data = {
+        "from": sender,
+        "to": [to_email],
+        "subject": f"Emlékeztető: Holnap {class_name} Pilates óra!",
+        "html": html_content
+    }
+
+    headers = {
+        "Authorization": f"Bearer {api_key}",
+        "Content-Type": "application/json",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    }
+
+    req = urllib.request.Request(
+        url, 
+        data=json.dumps(data).encode("utf-8"), 
+        headers=headers, 
+        method="POST"
+    )
+
+    try:
+        with urllib.request.urlopen(req) as response:
+            result = response.read().decode("utf-8")
+            print(f"Reminder email sent to {to_email}: {result}")
+    except Exception as e:
+        print(f"Failed to send reminder to {to_email}: {e}")
