@@ -26,7 +26,7 @@ def send_reset_password_email(to_email: str, reset_link: str):
     url = "https://api.resend.com/emails"
     
     # A Resend alapértelmezett teszt címe, ha a domain nincs hitelesítve
-    sender = "BekkaPilates <onboarding@resend.dev>"
+    sender = "BekkaPilates <noreply@bekkapilates.hu>"
 
     html_content = f"""
     <html>
@@ -80,7 +80,7 @@ def send_reminder_email(to_email: str, class_name: str, start_time, location: st
         return
 
     url = "https://api.resend.com/emails"
-    sender = "BekkaPilates <onboarding@resend.dev>"
+    sender = "BekkaPilates <noreply@bekkapilates.hu>"
     
     # Format the time nicely
     time_str = start_time.strftime("%Y. %m. %d. %H:%M")
